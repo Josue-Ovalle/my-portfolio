@@ -5,6 +5,7 @@ import { useRef } from 'react';
 import { Code2, Zap, Brain, Trophy } from 'lucide-react';
 import { personalInfo, skills, timeline } from '@/data/portfolioData';
 import { containerVariants, itemVariants, skillAnimations } from '@/utils/animations';
+import Image from 'next/image';
 
 const About = () => {
   const ref = useRef(null);
@@ -14,7 +15,7 @@ const About = () => {
     {
       icon: Brain,
       title: "AI-Enhanced Workflow",
-      description: "Leveraging ChatGPT, GitHub Copilot, and other AI tools to accelerate development and improve code quality."
+      description: "Leveraging Claude, GitHub Copilot, and other AI tools to accelerate development and improve code quality."
     },
     {
       icon: Zap,
@@ -91,7 +92,7 @@ const About = () => {
                 >
                   <div className="w-48 h-48 rounded-full bg-gradient-to-br from-primary-400 to-purple-500 p-1">
                     <div className="w-full h-full rounded-full bg-neutral-200 dark:bg-neutral-700 flex items-center justify-center text-6xl font-bold text-primary-600 dark:text-primary-400">
-                      AC
+                      <Image src="/my-photo.jpg" alt="Profile photo" width={200} height={200} className="profile-img-class rounded-full" />
                     </div>
                   </div>
                   <motion.div

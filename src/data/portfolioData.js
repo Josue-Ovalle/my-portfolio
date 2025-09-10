@@ -1,11 +1,11 @@
 export const personalInfo = {
-  name: "Alex Chen",
+  name: "Josué Ovalle",
   tagline: "Emerging coder building fast, affordable websites with AI",
   description: "I'm an AI-assisted web developer who creates modern, performant websites using cutting-edge tools and technologies. I combine traditional coding skills with AI automation to deliver exceptional results faster and more efficiently.",
-  location: "San Francisco, CA",
-  email: "hello@alexchen.dev",
+  location: "Guatemala City, GT",
+  email: "josueovalle064@gmail.com",
   social: {
-    github: "https://github.com/alexchen",
+    github: "https://github.com/Josue-Ovalle",
     linkedin: "https://linkedin.com/in/alexchen",
     twitter: "https://twitter.com/alexchen",
   }

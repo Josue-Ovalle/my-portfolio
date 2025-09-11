@@ -1,5 +1,6 @@
 import { Inter, JetBrains_Mono } from 'next/font/google'
 import './globals.css'
+import { ThemeProvider } from '@/providers/ThemeProvider';
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -54,7 +55,7 @@ export const viewport = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`}>
+    <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`} suppressHydrationWarning>
       <head>
         <link rel="icon" href="/favicon.ico" />
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
@@ -64,7 +65,9 @@ export default function RootLayout({ children }) {
         <meta name="theme-color" content="#0ea5e9" />
       </head>
       <body className="font-sans bg-white dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 transition-colors duration-300">
-        <div id="root">{children}</div>
+        <ThemeProvider>
+          <div id="root">{children}</div>
+        </ThemeProvider>
       </body>
     </html>
   )

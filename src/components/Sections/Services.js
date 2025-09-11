@@ -5,10 +5,10 @@ import { useRef, useState } from 'react';
 import { ArrowRight, Check, Globe, Code2, Palette, ShoppingCart, Zap, Brain } from 'lucide-react';
 import { services } from '@/data/portfolioData';
 import { containerVariants, itemVariants, cardHover } from '@/utils/animations';
+import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 
 const Services = () => {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, amount: 0.2 });
+  const { ref, isInView } = useScrollAnimation();
   const [hoveredService, setHoveredService] = useState(null);
 
   const iconComponents = {
@@ -32,13 +32,13 @@ const Services = () => {
   };
 
   return (
-    <section id="services" className="section-padding">
+    <section id="services" className="section-padding bg-neutral-50 dark:bg-neutral-900/30">
       <div className="container mx-auto container-padding">
         <motion.div
-          ref={ref}
+          ref={ref} 
           variants={containerVariants}
           initial="hidden"
-          animate={isInView ? "visible" : "hidden"}
+          animate={isInView ? "visible" : "hidden"} 
           className="max-w-6xl mx-auto"
         >
           {/* Section Header */}
@@ -61,7 +61,7 @@ const Services = () => {
                 <motion.div
                   key={service.id}
                   variants={itemVariants}
-                  {...cardHover}
+                  {...cardHover} // This is what needs to be updated
                   onHoverStart={() => setHoveredService(service.id)}
                   onHoverEnd={() => setHoveredService(null)}
                   className="card group relative overflow-hidden"
@@ -80,7 +80,7 @@ const Services = () => {
                     {/* Icon */}
                     <motion.div 
                       className="w-14 h-14 bg-primary-100 dark:bg-primary-900/30 rounded-xl flex items-center justify-center mb-6 group-hover:bg-primary-200 dark:group-hover:bg-primary-900/50 transition-colors duration-300"
-                      whileHover={{ rotate: 5, scale: 1.1 }}
+                      whileHover={{ rotate: 3, scale: 1.05 }} // Updated from rotate: 5, scale: 1.1
                       transition={{ type: "spring", stiffness: 300, damping: 20 }}
                     >
                       <IconComponent className="w-7 h-7 text-primary-600 dark:text-primary-400" />

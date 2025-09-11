@@ -5,10 +5,10 @@ import { useRef, useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Star, Quote } from 'lucide-react';
 import { testimonials } from '@/data/portfolioData';
 import { containerVariants, itemVariants } from '@/utils/animations';
+import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 
 const Testimonials = () => {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, amount: 0.2 });
+  const { ref, isInView } = useScrollAnimation();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
 
@@ -55,13 +55,13 @@ const Testimonials = () => {
 
   const TestimonialCard = ({ testimonial, isActive, isPrev, isNext }) => (
     <motion.div
-      initial={{ opacity: 0, scale: 0.8 }}
+      initial={{ opacity: 0, scale: 0.95 }}
       animate={{ 
         opacity: isActive ? 1 : 0.3,
-        scale: isActive ? 1 : 0.8,
+        scale: isActive ? 1 : 0.95,
         x: isPrev ? '-100%' : isNext ? '100%' : '0%'
       }}
-      transition={{ duration: 0.5, ease: [0.6, -0.05, 0.01, 0.99] }}
+      transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
       className={`absolute inset-0 flex items-center justify-center ${
         isActive ? 'z-10' : 'z-0'
       }`}
@@ -126,13 +126,13 @@ const Testimonials = () => {
   );
 
   return (
-    <section id="testimonials" className="section-padding">
+    <section id="testimonials" className="section-padding bg-neutral-50 dark:bg-neutral-900/30">
       <div className="container mx-auto container-padding">
         <motion.div
-          ref={ref}
+          ref={ref} 
           variants={containerVariants}
           initial="hidden"
-          animate={isInView ? "visible" : "hidden"}
+          animate={isInView ? "visible" : "hidden"} 
           className="max-w-6xl mx-auto"
         >
           {/* Section Header */}
@@ -237,7 +237,7 @@ const Testimonials = () => {
             <h3 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100 mb-4">
               Ready to Join These Happy Clients?
             </h3>
-            <p className="text-neutral-600 dark:text-neutral-400 mb-8 max-w-2xl mx-auto">
+            <p className="text-neutral-600 dark:text-neutral-400 mb-8 max-w-2xl mx-auto leading-relaxed">
               Let&apos;s discuss your project and see how AI-enhanced development 
               can accelerate your success.
             </p>

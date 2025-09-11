@@ -69,7 +69,7 @@ const Footer = () => {
   };
 
   return (
-  <footer className="bg-neutral-900 dark:bg-neutral-950 text-neutral-300">
+  <footer className="bg-neutral-900 dark:bg-neutral-950 text-neutral-300 border-t border-neutral-800 dark:border-neutral-800">
     {/* Main Footer Content */}
     <div className="container mx-auto container-padding py-16">
       <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -96,7 +96,7 @@ const Footer = () => {
                   rel={social.href.startsWith('http') ? 'noopener noreferrer' : undefined}
                   whileHover={{ scale: 1.1, y: -2 }}
                   whileTap={{ scale: 0.95 }}
-                  className={`p-2 bg-neutral-800 dark:bg-neutral-900 rounded-lg transition-all duration-300 ${social.color}`}
+                  className={`p-2 bg-neutral-800 dark:bg-neutral-900 rounded-lg transition-all duration-300 ${social.color} backdrop-blur-sm`}
                   aria-label={social.label}
                 >
                   <social.icon className="w-5 h-5" />
@@ -200,7 +200,7 @@ const Footer = () => {
             <input
               type="email"
               placeholder="Enter your email"
-              className="flex-1 px-4 py-2 bg-neutral-800 dark:bg-neutral-900 rounded-lg text-white placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all duration-300"
+              className="flex-1 px-4 py-2 bg-neutral-800 dark:bg-neutral-900 rounded-lg text-white placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all duration-300 backdrop-blur-sm"
             />
             <motion.button
               whileHover={{ scale: 1.05 }}

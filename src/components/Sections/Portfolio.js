@@ -5,10 +5,10 @@ import { useRef, useState } from 'react';
 import { ExternalLink, Github, Filter, X } from 'lucide-react';
 import { projects } from '@/data/portfolioData';
 import { containerVariants, itemVariants, cardHover } from '@/utils/animations';
+import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 
 const Portfolio = () => {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, amount: 0.2 });
+  const { ref, isInView } = useScrollAnimation();
   const [filter, setFilter] = useState('all');
   const [selectedProject, setSelectedProject] = useState(null);
 
@@ -117,10 +117,10 @@ const Portfolio = () => {
       onClick={onClose}
     >
       <motion.div
-        initial={{ scale: 0.8, opacity: 0 }}
+        initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        exit={{ scale: 0.8, opacity: 0 }}
-        transition={{ duration: 0.3 }}
+        exit={{ scale: 0.95, opacity: 0 }}
+        transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
         onClick={(e) => e.stopPropagation()}
         className="bg-white dark:bg-neutral-800 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
       >
@@ -197,13 +197,13 @@ const Portfolio = () => {
   );
 
   return (
-    <section id="portfolio" className="section-padding bg-neutral-50 dark:bg-neutral-900/50">
+    <section id="portfolio" className="section-padding bg-neutral-50 dark:bg-neutral-900/30">
       <div className="container mx-auto container-padding">
         <motion.div
-          ref={ref}
+          ref={ref} 
           variants={containerVariants}
           initial="hidden"
-          animate={isInView ? "visible" : "hidden"}
+          animate={isInView ? "visible" : "hidden"} 
           className="max-w-6xl mx-auto"
         >
           {/* Section Header */}
@@ -255,7 +255,7 @@ const Portfolio = () => {
               animate={{ opacity: 1, y: 0 }}
               className="text-center py-12"
             >
-              <p className="text-neutral-600 dark:text-neutral-400 text-lg">
+              <p className="text-neutral-600 dark:text-neutral-400 text-lg leading-relaxed">
                 No projects found in this category.
               </p>
             </motion.div>
@@ -269,7 +269,7 @@ const Portfolio = () => {
             <h3 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100 mb-4">
               Like What You See?
             </h3>
-            <p className="text-neutral-600 dark:text-neutral-400 mb-8 max-w-2xl mx-auto">
+            <p className="text-neutral-600 dark:text-neutral-400 mb-8 max-w-2xl mx-auto leading-relaxed">
               These projects represent just a fraction of what&apos;s possible with AI-enhanced development. 
               Let&apos;s create something amazing together.
             </p>

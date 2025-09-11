@@ -5,11 +5,11 @@ import { useRef } from 'react';
 import { Code2, Zap, Brain, Trophy } from 'lucide-react';
 import { personalInfo, skills, timeline } from '@/data/portfolioData';
 import { containerVariants, itemVariants, skillAnimations } from '@/utils/animations';
+import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import Image from 'next/image';
 
 const About = () => {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, amount: 0.3 });
+  const { ref, isInView } = useScrollAnimation();
 
   const features = [
     {
@@ -41,7 +41,7 @@ const About = () => {
       className="space-y-2"
     >
       <div className="flex justify-between text-sm">
-        <span className="font-medium text-neutral-700 dark:text-neutral-300">
+        <span className="font-medium text-neutral-700 dark:text-neutral-300 leading-relaxed">
           {skill.name}
         </span>
         <span className="text-primary-600 dark:text-primary-400">
@@ -53,20 +53,20 @@ const About = () => {
           className="skill-progress"
           initial={{ width: 0 }}
           animate={isInView ? { width: `${skill.level}%` } : { width: 0 }}
-          transition={{ duration: 1.5, delay: index * 0.1, ease: [0.6, -0.05, 0.01, 0.99] }}
+          transition={{ duration: 1.2, delay: index * 0.1, ease: [0.4, 0, 0.2, 1] }}
         />
       </div>
     </motion.div>
   );
 
   return (
-    <section id="about" className="section-padding bg-neutral-50 dark:bg-neutral-900/50">
+    <section id="about" className="section-padding bg-neutral-50 dark:bg-neutral-900/30">
       <div className="container mx-auto container-padding">
         <motion.div
           ref={ref}
           variants={containerVariants}
           initial="hidden"
-          animate={isInView ? "visible" : "hidden"}
+          animate={isInView ? "visible" : "hidden"} 
           className="max-w-6xl mx-auto"
         >
           {/* Section Header */}
@@ -74,7 +74,7 @@ const About = () => {
             <h2 className="heading-md text-neutral-900 dark:text-neutral-100 mb-6">
               About Me
             </h2>
-            <p className="text-xl text-neutral-600 dark:text-neutral-400 max-w-3xl mx-auto">
+            <p className="text-xl text-neutral-600 dark:text-neutral-400 max-w-3xl mx-auto leading-relaxed">
               I&apos;m an emerging developer passionate about combining traditional web development 
               skills with AI-powered tools to create exceptional digital experiences.
             </p>
@@ -86,7 +86,7 @@ const About = () => {
               {/* Profile Image */}
               <div className="flex justify-center lg:justify-start">
                 <motion.div
-                  whileHover={{ scale: 1.05 }}
+                  whileHover={{ scale: 1.03 }}
                   transition={{ type: "spring", stiffness: 300, damping: 20 }}
                   className="relative"
                 >
@@ -158,8 +158,8 @@ const About = () => {
               <motion.div
                 key={feature.title}
                 variants={itemVariants}
-                whileHover={{ y: -8, transition: { type: "spring", stiffness: 300 } }}
-                className="card card-hover p-6 text-center"
+                whileHover={{ y: -5, transition: { type: "spring", stiffness: 300 } }}
+                className="card card-hover p-6 text-center backdrop-blur-sm"
               >
                 <div className="w-12 h-12 bg-primary-100 dark:bg-primary-900/30 rounded-lg flex items-center justify-center mx-auto mb-4">
                   <feature.icon className="w-6 h-6 text-primary-600 dark:text-primary-400" />
@@ -186,14 +186,14 @@ const About = () => {
                   variants={itemVariants}
                   className="timeline-item"
                 >
-                  <div className="bg-white dark:bg-neutral-800 rounded-lg p-6 shadow-lg">
+                  <div className="bg-white dark:bg-neutral-900 rounded-lg p-6 shadow-lg backdrop-blur-sm">
                     <div className="text-sm font-semibold text-primary-600 dark:text-primary-400 mb-2">
                       {item.year}
                     </div>
                     <h4 className="text-lg font-bold text-neutral-900 dark:text-neutral-100 mb-2">
                       {item.title}
                     </h4>
-                    <p className="text-neutral-600 dark:text-neutral-400">
+                    <p className="text-neutral-600 dark:text-neutral-400 leading-relaxed">
                       {item.description}
                     </p>
                   </div>

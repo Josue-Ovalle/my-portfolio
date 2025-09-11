@@ -20,7 +20,7 @@ html {
 
 body {
   font-family: var(--font-inter);
-  line-height: 1.6;
+  line-height: 1.7; /* Increased line height for better readability */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -31,7 +31,7 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-neutral-100 dark:bg-neutral-800;
+  @apply bg-neutral-100 dark:bg-neutral-900;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -52,20 +52,24 @@ body {
   @apply outline-none ring-2 ring-primary-500 ring-offset-2 ring-offset-white dark:ring-offset-neutral-900;
 }
 
-/* Custom gradient backgrounds */
+/* Enhanced gradient backgrounds */
 .gradient-bg {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+}
+
+.dark .gradient-bg {
+  background: linear-gradient(135deg, #082f49 0%, #0c4a6e 100%);
 }
 
 .gradient-text {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #0ea5e9 0%, #0369a1 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .animated-gradient {
-  background: linear-gradient(-45deg, #667eea, #764ba2, #f093fb, #f5576c);
+  background: linear-gradient(-45deg, #0ea5e9, #0369a1, #38bdf8, #0284c7);
   background-size: 400% 400%;
   animation: gradient 15s ease infinite;
 }
@@ -76,32 +80,32 @@ body {
   100% { background-position: 0% 50%; }
 }
 
-/* Glass morphism effect */
+/* Enhanced glass morphism effect */
 .glass {
-  @apply backdrop-blur-lg bg-white/10 dark:bg-black/10 border border-white/20 dark:border-white/10;
+  @apply backdrop-blur-md bg-white/20 dark:bg-black/20 border border-white/30 dark:border-white/10;
 }
 
-/* Custom button styles */
+/* Updated button styles */
 .btn-primary {
-  @apply bg-primary-600 hover:bg-primary-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2;
+  @apply bg-accent-light dark:bg-accent-dark hover:bg-emerald-600 dark:hover:bg-cyan-500 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-accent-light dark:focus:ring-accent-dark focus:ring-offset-2;
 }
 
 .btn-secondary {
   @apply bg-transparent hover:bg-primary-50 dark:hover:bg-primary-900/20 text-primary-600 dark:text-primary-400 border border-primary-600 dark:border-primary-400 font-semibold py-3 px-6 rounded-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2;
 }
 
-/* Card styles */
+/* Enhanced card styles */
 .card {
-  @apply bg-white dark:bg-neutral-800 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-neutral-200 dark:border-neutral-700;
+  @apply bg-white dark:bg-neutral-900 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border border-neutral-200 dark:border-neutral-800 backdrop-blur-sm;
 }
 
 .card-hover {
-  @apply hover:transform hover:-translate-y-2 hover:shadow-2xl;
+  @apply hover:transform hover:-translate-y-1 hover:shadow-xl;
 }
 
-/* Typography utilities */
+/* Enhanced typography utilities */
 .text-gradient {
-  @apply bg-gradient-to-r from-primary-600 to-purple-600 bg-clip-text text-transparent;
+  @apply bg-gradient-to-r from-primary-600 to-primary-700 dark:from-primary-400 dark:to-primary-500 bg-clip-text text-transparent;
 }
 
 .heading-lg {
@@ -116,129 +120,118 @@ body {
   @apply text-2xl md:text-3xl font-bold leading-tight;
 }
 
-/* Loading animation */
-.loading-dots {
-  display: inline-block;
-}
-
-.loading-dots::after {
-  content: '';
-  animation: loading-dots 1.5s infinite;
-}
-
-@keyframes loading-dots {
-  0%, 20% { content: ''; }
-  40% { content: '.'; }
-  60% { content: '..'; }
-  80%, 100% { content: '...'; }
-}
-
-/* Skill bar animation */
-.skill-bar {
-  @apply h-2 bg-neutral-200 dark:bg-neutral-700 rounded-full overflow-hidden;
-}
-
-.skill-progress {
-  @apply h-full bg-gradient-to-r from-primary-500 to-primary-600 rounded-full transition-all duration-1000 ease-out;
-}
-
-/* Navigation styles */
-.nav-link {
-  @apply text-neutral-600 dark:text-neutral-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-300 relative;
-}
-
-.nav-link.active {
-  @apply text-primary-600 dark:text-primary-400;
-}
-
-.nav-link::after {
-  content: '';
-  @apply absolute bottom-0 left-0 w-0 h-0.5 bg-primary-600 dark:bg-primary-400 transition-all duration-300;
-}
-
-.nav-link:hover::after,
-.nav-link.active::after {
-  @apply w-full;
-}
-
-/* Form styles */
-.form-input {
-  @apply w-full px-4 py-3 rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 placeholder-neutral-500 dark:placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-300;
-}
-
-.form-input:focus {
-  @apply shadow-lg;
-}
-
-.form-error {
-  @apply border-red-500 bg-red-50 dark:bg-red-900/20;
-}
-
-/* Project card styles */
-.project-card {
-  @apply relative overflow-hidden rounded-xl;
-}
-
-.project-overlay {
-  @apply absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500;
-}
-
-.project-content {
-  @apply absolute bottom-0 left-0 right-0 p-6 text-white transform translate-y-full group-hover:translate-y-0 transition-transform duration-500;
-}
-
-/* Testimonial styles */
-.testimonial-card {
-  @apply bg-white dark:bg-neutral-800 rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300;
-}
-
-/* Timeline styles */
-.timeline-item {
-  @apply relative pl-8 pb-8;
-}
-
-.timeline-item::before {
-  content: '';
-  @apply absolute left-0 top-2 w-4 h-4 bg-primary-600 rounded-full;
-}
-
-.timeline-item::after {
-  content: '';
-  @apply absolute left-2 top-6 bottom-0 w-0.5 bg-neutral-300 dark:bg-neutral-600;
-}
-
-.timeline-item:last-child::after {
-  @apply hidden;
-}
-
-/* Mobile-specific styles */
-@media (max-width: 768px) {
-  .mobile-padding {
-    @apply px-4;
-  }
-  
-  .mobile-text-center {
-    @apply text-center;
-  }
-}
-
-/* Dark mode transitions */
-.dark-transition {
-  @apply transition-colors duration-300;
-}
-
-/* Utility classes for spacing */
+/* Enhanced section spacing */
 .section-padding {
-  @apply py-20 lg:py-32;
+  @apply py-24 lg:py-36; /* Increased padding for more breathing room */
 }
 
 .container-padding {
   @apply px-4 sm:px-6 lg:px-8;
 }
 
+/* Enhanced form styles */
+.form-input {
+  @apply w-full px-4 py-3 rounded-lg border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-neutral-900 dark:text-neutral-100 placeholder-neutral-500 dark:placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-300;
+}
+
+.form-input:focus {
+  @apply shadow-md ring-2 ring-primary-500;
+}
+
+/* Enhanced project card styles */
+.project-card {
+  @apply relative overflow-hidden rounded-xl bg-white dark:bg-neutral-900 shadow-lg;
+}
+
+.project-overlay {
+  @apply absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500;
+}
+
+.project-content {
+  @apply absolute bottom-0 left-0 right-0 p-6 text-white transform translate-y-full group-hover:translate-y-0 transition-transform duration-500;
+}
+
+/* Enhanced testimonial styles */
+.testimonial-card {
+  @apply bg-white dark:bg-neutral-900 rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-neutral-100 dark:border-neutral-800;
+}
+
+/* Add a subtle background pattern */
+.bg-pattern {
+  background-image: radial-gradient(#e5e5e5 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+.dark .bg-pattern {
+  background-image: radial-gradient(#262626 1px, transparent 1px);
+}
+
+/* Add subtle animations for interactive elements */
+.interactive-element {
+  @apply transition-all duration-300 ease-in-out;
+}
+
+/* Enhanced focus states for accessibility */
+.focus-ring {
+  @apply focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-neutral-900;
+}
+
 /* Print styles */
 @media print {
   .no-print {
     display: none !important;
+  }
+}
+
+/* Animation utility classes */
+.animate-in {
+  animation: fadeIn 0.6s ease-in-out;
+}
+
+.slide-in-bottom {
+  animation: slideUp 0.6s ease-out;
+}
+
+.slide-in-left {
+  animation: slideInLeft 0.6s ease-out;
+}
+
+.slide-in-right {
+  animation: slideInRight 0.6s ease-out;
+}
+
+.text-reveal {
+  animation: textReveal 1s ease-in-out forwards;
+}
+
+.delay-100 {
+  animation-delay: 100ms;
+}
+
+.delay-200 {
+  animation-delay: 200ms;
+}
+
+.delay-300 {
+  animation-delay: 300ms;
+}
+
+.delay-400 {
+  animation-delay: 400ms;
+}
+
+.delay-500 {
+  animation-delay: 500ms;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

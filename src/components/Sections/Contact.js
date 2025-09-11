@@ -5,10 +5,10 @@ import { useRef, useState } from 'react';
 import { Mail, Phone, MapPin, Send, Github, Linkedin, Twitter, CheckCircle, AlertCircle } from 'lucide-react';
 import { useForm, validationRules, FormField } from '@/hooks/useForm';
 import { containerVariants, itemVariants } from '@/utils/animations';
+import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 
 const Contact = () => {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, amount: 0.2 });
+  const { ref, isInView } = useScrollAnimation();
   const [submitStatus, setSubmitStatus] = useState(null);
 
   const {
@@ -55,20 +55,20 @@ const Contact = () => {
     {
       icon: Mail,
       label: 'Email',
-      value: 'hello@alexchen.dev',
-      href: 'mailto:hello@alexchen.dev'
+      value: 'josueovalle064@gmail.com',
+      href: 'josueovalle064@gmail.com'
     },
     {
       icon: Phone,
       label: 'Phone',
-      value: '+1 (555) 123-4567',
-      href: 'tel:+15551234567'
+      value: '+502 4732-7768',
+      href: 'tel:+50247327768'
     },
     {
       icon: MapPin,
       label: 'Location',
-      value: 'San Francisco, CA',
-      href: 'https://maps.google.com/?q=San Francisco, CA'
+      value: 'Guatemala City, GT',
+      href: 'https://maps.app.goo.gl/teyFgzxK7TRU2yYX7 Guatemala City, GT'
     }
   ];
 
@@ -76,7 +76,7 @@ const Contact = () => {
     {
       icon: Github,
       label: 'GitHub',
-      href: 'https://github.com/alexchen',
+      href: 'https://github.com/Josue-Ovalle',
       color: 'hover:text-gray-900 dark:hover:text-white'
     },
     {
@@ -94,13 +94,13 @@ const Contact = () => {
   ];
 
   return (
-    <section id="contact" className="section-padding bg-neutral-50 dark:bg-neutral-900/50">
+    <section id="contact" className="section-padding bg-neutral-50 dark:bg-neutral-900/30">
       <div className="container mx-auto container-padding">
         <motion.div
-          ref={ref}
+          ref={ref} 
           variants={containerVariants}
           initial="hidden"
-          animate={isInView ? "visible" : "hidden"}
+          animate={isInView ? "visible" : "hidden"} 
           className="max-w-6xl mx-auto"
         >
           {/* Section Header */}
@@ -244,7 +244,8 @@ const Contact = () => {
                       href={info.href}
                       target={info.href.startsWith('http') ? '_blank' : undefined}
                       rel={info.href.startsWith('http') ? 'noopener noreferrer' : undefined}
-                      whileHover={{ x: 4 }}
+                      whileHover={{ x: 3 }}
+                      transition={{ type: "spring", stiffness: 300, damping: 20 }}
                       className="flex items-center gap-4 p-4 bg-white dark:bg-neutral-800 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 group"
                     >
                       <div className="w-12 h-12 bg-primary-100 dark:bg-primary-900/30 rounded-lg flex items-center justify-center group-hover:bg-primary-200 dark:group-hover:bg-primary-900/50 transition-colors duration-300">
@@ -275,7 +276,7 @@ const Contact = () => {
                       href={social.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      whileHover={{ scale: 1.1, y: -2 }}
+                      whileHover={{ scale: 1.05, y: -2 }}
                       whileTap={{ scale: 0.95 }}
                       className={`p-3 bg-white dark:bg-neutral-800 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 text-neutral-600 dark:text-neutral-400 ${social.color}`}
                       aria-label={social.label}

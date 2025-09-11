@@ -48,7 +48,11 @@ const Header = ({ darkMode, toggleDarkMode }) => {
   const handleNavClick = (href) => {
     const element = document.querySelector(href);
     if (element) {
-      const offsetTop = element.offsetTop - 80;
+      // Get the header height dynamically
+      const header = document.querySelector('header');
+      const headerHeight = header ? header.offsetHeight : 80;
+      
+      const offsetTop = element.offsetTop - headerHeight;
       window.scrollTo({
         top: offsetTop,
         behavior: 'smooth'
@@ -62,7 +66,7 @@ const Header = ({ darkMode, toggleDarkMode }) => {
     visible: { 
       y: 0, 
       opacity: 1,
-      transition: { duration: 0.6, ease: [0.6, -0.05, 0.01, 0.99] }
+      transition: { duration: 0.5, ease: [0.4, 0, 0.2, 1] }
     }
   };
 
@@ -70,12 +74,12 @@ const Header = ({ darkMode, toggleDarkMode }) => {
     hidden: { 
       opacity: 0, 
       x: '100%',
-      transition: { duration: 0.3, ease: [0.6, -0.05, 0.01, 0.99] }
+      transition: { duration: 0.3, ease: [0.4, 0, 0.2, 1] }
     },
     visible: { 
       opacity: 1, 
       x: 0,
-      transition: { duration: 0.3, ease: [0.6, -0.05, 0.01, 0.99] }
+      transition: { duration: 0.3, ease: [0.4, 0, 0.2, 1] }
     }
   };
 
@@ -86,7 +90,7 @@ const Header = ({ darkMode, toggleDarkMode }) => {
       animate="visible"
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled 
-          ? 'bg-white/90 dark:bg-neutral-950/90 backdrop-blur-lg shadow-lg' 
+          ? 'bg-white/80 dark:bg-neutral-950/80 backdrop-blur-md shadow-sm border-b border-neutral-200/50 dark:border-neutral-800/50' 
           : 'bg-transparent'
       }`}
     >
@@ -175,38 +179,70 @@ const Header = ({ darkMode, toggleDarkMode }) => {
           </div>
         </div>
       </nav>
-
       {/* Mobile Navigation */}
       <AnimatePresence>
         {isMenuOpen && (
-          <motion.div
-            variants={mobileMenuVariants}
-            initial="hidden"
-            animate="visible"
-            exit="hidden"
-            className="md:hidden absolute top-full left-0 right-0 bg-white dark:bg-neutral-950 border-t border-neutral-200 dark:border-neutral-800"
-          >
-            <div className="px-4 py-6 space-y-4">
-              {navigationItems.map((item, index) => (
-                <motion.a
-                  key={item.name}
-                  href={item.href}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleNavClick(item.href);
-                  }}
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.3, delay: 0.1 * index }}
-                  className={`block py-2 text-lg nav-link ${
-                    activeSection === item.href.substring(1) ? 'active' : ''
-                  }`}
-                >
-                  {item.name}
-                </motion.a>
-              ))}
-            </div>
-          </motion.div>
+          <>
+            {/* Overlay */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 md:hidden"
+              onClick={() => setIsMenuOpen(false)}
+            />
+            
+            {/* Menu Panel */}
+            <motion.div
+              variants={mobileMenuVariants}
+              initial="hidden"
+              animate="visible"
+              exit="hidden"
+              className="fixed top-0 right-0 bottom-0 w-80 bg-white dark:bg-neutral-950 shadow-xl z-50 md:hidden"
+            >
+              <div className="p-6 h-full flex flex-col">
+                {/* Close button */}
+                <div className="flex justify-end mb-8">
+                  <button
+                    onClick={() => setIsMenuOpen(false)}
+                    className="p-2 rounded-lg bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+                    aria-label="Close menu"
+                  >
+                    <X className="w-6 h-6" />
+                  </button>
+                </div>
+                
+                {/* Navigation items */}
+                <nav className="flex-1 space-y-6">
+                  {navigationItems.map((item, index) => (
+                    <motion.a
+                      key={item.name}
+                      href={item.href}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleNavClick(item.href);
+                      }}
+                      initial={{ opacity: 0, y: -15 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.4, delay: 0.1 * index, ease: [0.4, 0, 0.2, 1] }}
+                      className={`block text-xl font-medium nav-link ${activeSection === item.href.substring(1) ? 'active' : ''}`}
+                    >
+                      {item.name}
+                    </motion.a>
+                  ))}
+                </nav>
+                
+                {/* Additional info at the bottom */}
+                <div className="pt-8 mt-auto border-t border-neutral-200 dark:border-neutral-800">
+                  <div className="flex items-center justify-between text-sm text-neutral-500 dark:text-neutral-400">
+                    <span>Available for projects</span>
+                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </motion.header>

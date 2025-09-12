@@ -115,11 +115,11 @@ const Hero = () => {
           >
             <motion.button
               onClick={handleContactClick}
-              whileHover={{ scale: 1.02, boxShadow: "0 10px 25px rgba(16, 185, 129, 0.3)" }}
+              whileHover={{ scale: 1.05, boxShadow: "0 10px 25px rgba(16, 185, 129, 0.3)" }}
               whileTap={{ scale: 0.98 }}
-              className="btn-primary group flex items-center gap-2 text-lg px-8 py-4"
+              className="btn-primary group flex items-center gap-2 text-lg px-8 py-4 rounded-full" 
             >
-              Get Started
+              <span>Get Started</span>
               <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
             </motion.button>
 
@@ -127,9 +127,9 @@ const Hero = () => {
               onClick={handleScrollToAbout}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="btn-secondary group flex items-center gap-2 text-lg px-8 py-4"
+              className="text-neutral-600 dark:text-neutral-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-300 group flex items-center gap-2 text-lg px-6 py-3" 
             >
-              Learn More
+              <span>Learn More</span>
               <ChevronDown className="w-5 h-5 transition-transform group-hover:translate-y-1" />
             </motion.button>
           </motion.div>

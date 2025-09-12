@@ -6,8 +6,8 @@ export const personalInfo = {
   email: "josueovalle064@gmail.com",
   social: {
     github: "https://github.com/Josue-Ovalle",
-    linkedin: "https://linkedin.com/in/alexchen",
-    twitter: "https://twitter.com/alexchen",
+    linkedin: "https://www.linkedin.com/in/josu%C3%A9-ovalle-07393437a/",
+    twitter: "https://x.com/JosueOvalle_",
   }
 };
 
@@ -81,8 +81,8 @@ export const projects = [
     image: "/projects/portfolio.jpg",
     technologies: ["Next.js", "Tailwind CSS", "Framer Motion", "Vercel"],
     category: "portfolio",
-    demoUrl: "https://demo-portfolio.vercel.app",
-    githubUrl: "https://github.com/alexchen/portfolio",
+    demoUrl: "https://josueovalle.com",
+    githubUrl: "https://github.com/Josue-Ovalle/my-portfolio",
     featured: true
   },
   {

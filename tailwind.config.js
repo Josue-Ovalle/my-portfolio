@@ -11,14 +11,13 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // Updated color palette
         primary: {
           50: '#f0f9ff',
           100: '#e0f2fe',
           200: '#bae6fd',
           300: '#7dd3fc',
           400: '#38bdf8',
-          500: '#0ea5e9', // Primary blue (unchanged)
+          500: '#0ea5e9',
           600: '#0284c7',
           700: '#0369a1',
           800: '#075985',
@@ -26,21 +25,21 @@ module.exports = {
           950: '#082f49',
         },
         accent: {
-          light: '#10b981', // Emerald for light mode CTA
-          dark: '#22d3ee',  // Cyan for dark mode CTA
+          light: '#0369a1', 
+          dark: '#22d3ee',  
         },
         neutral: {
-          50: '#fafafa',    // Softer near-white
+          50: '#fafafa',
           100: '#f5f5f5',
-          200: '#e5e5e5',   // Subtle border for light mode
+          200: '#e5e5e5',
           300: '#d4d4d4',
           400: '#a3a3a3',
           500: '#737373',
-          600: '#525252',   // Text secondary
+          600: '#525252',
           700: '#404040',
-          800: '#262626',   // Subtle border for dark mode
-          900: '#171717',   // Text primary, Surface/Cards dark mode
-          950: '#0a0a0a',   // Background dark mode
+          800: '#262626',
+          900: '#171717',
+          950: '#0a0a0a',
         }
       },
       fontFamily: {
@@ -55,6 +54,7 @@ module.exports = {
         'bounce-gentle': 'bounceGentle 2s infinite',
         'gradient': 'gradient 6s ease infinite',
         'float': 'float 6s ease-in-out infinite',
+        'text-reveal': 'textReveal 1.5s ease-in-out forwards', 
       },
       keyframes: {
         fadeIn: {
@@ -86,24 +86,16 @@ module.exports = {
           '0%, 100%': { transform: 'translateY(0px)' },
           '50%': { transform: 'translateY(-10px)' },
         },
+        textReveal: {
+          '0%': { opacity: '0', transform: 'translateY(20px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
       },
       backgroundSize: {
         '300%': '300%',
       },
       transitionTimingFunction: {
         'in-out-expo': 'cubic-bezier(0.4, 0, 0.2, 1)',
-      },
-      // Add a new animation for text reveal
-      animation: {
-        // ... keep existing animations
-        'text-reveal': 'textReveal 1.5s ease-in-out forwards',
-      },
-      keyframes: {
-        // ... keep existing keyframes
-        textReveal: {
-          '0%': { opacity: '0', transform: 'translateY(20px)' },
-          '100%': { opacity: '1', transform: 'translateY(0)' },
-        },
       },
     },
   },

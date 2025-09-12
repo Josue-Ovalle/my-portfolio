@@ -1,6 +1,10 @@
 import { Inter, JetBrains_Mono } from 'next/font/google'
 import './globals.css'
 import { ThemeProvider } from '@/providers/ThemeProvider';
+import PerformanceMonitor from '@/components/PerformanceMonitor';
+import ErrorBoundary from '@/components/ErrorBoundary';
+import { url } from 'zod';
+import Analytics from '@/components/Analytics';
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -16,37 +20,55 @@ const jetbrainsMono = JetBrains_Mono({
 
 // ✅ Metadata (sin viewport adentro)
 export const metadata = {
-  title: 'Alex Chen - AI-Enhanced Web Developer',
+  title: {
+    default: 'Josué Ovalle - AI-Enhanced Web Developer',
+    template: '%s | Josué Ovalle'
+  },
   description: 'Emerging coder building fast, affordable websites with AI. Specializing in React, Next.js, and modern web development.',
-  keywords: 'web developer, AI development, React, Next.js, Tailwind CSS, modern websites',
-  authors: [{ name: 'Alex Chen' }],
-  creator: 'Alex Chen',
-  publisher: 'Alex Chen',
+  keywords: 'web developer, AI development, React, Next.js, Tailwind CSS, modern websites, Guatemala developer',
+  authors: [{ name: 'Josué Ovalle' }],
+  creator: 'Josué Ovalle',
+  publisher: 'Josué Ovalle',
   robots: {
     index: true,
     follow: true,
     googleBot: {
       index: true,
       follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
     },
   },
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://alexchen.dev',
-    title: 'Alex Chen - AI-Enhanced Web Developer',
+    url: 'https://josueovalle.com',
+    siteName: 'Josué Ovalle Portfolio',
+    title: 'Josué Ovalle - AI-Enhanced Web Developer',
     description: 'Emerging coder building fast, affordable websites with AI. Specializing in React, Next.js, and modern web development.',
-    siteName: 'Alex Chen Portfolio',
+    images: [
+      {
+        url: '/public/my-photo.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Josué Ovalle - Web Developer',
+      }
+    ]
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Alex Chen - AI-Enhanced Web Developer',
+    title: 'Josué Ovalle - AI-Enhanced Web Developer',
     description: 'Emerging coder building fast, affordable websites with AI. Specializing in React, Next.js, and modern web development.',
-    creator: '@alexchen',
+    creator: '@JosueOvalle_',
+    images: ['/public/my-photo.jpg'],
   },
+  verification: {
+    google: 'placeholder', //do later
+  }
 }
 
-// ✅ Viewport exportado separado
+// Viewport exportado separado
 export const viewport = {
   width: 'device-width',
   initialScale: 1,
@@ -65,9 +87,13 @@ export default function RootLayout({ children }) {
         <meta name="theme-color" content="#0ea5e9" />
       </head>
       <body className="font-sans bg-white dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 transition-colors duration-300">
-        <ThemeProvider>
-          <div id="root">{children}</div>
-        </ThemeProvider>
+          <ThemeProvider>
+            <ErrorBoundary>
+              <div id="root">{children}</div>
+              <PerformanceMonitor />
+              <Analytics />
+            </ErrorBoundary>
+          </ThemeProvider>
       </body>
     </html>
   )

@@ -90,9 +90,15 @@ const About = () => {
                   transition={{ type: "spring", stiffness: 300, damping: 20 }}
                   className="relative"
                 >
-                  <div className="w-48 h-48 rounded-full bg-gradient-to-br from-primary-400 to-purple-500 p-1">
-                    <div className="w-full h-full rounded-full bg-neutral-200 dark:bg-neutral-700 flex items-center justify-center text-6xl font-bold text-primary-600 dark:text-primary-400">
-                      <Image src="/my-photo.jpg" alt="Profile photo" width={200} height={200} className="profile-img-class rounded-full" />
+                  <div className="w-48 h-48 rounded-full bg-gradient-to-br from-primary-400 to-purple-500 p-1 relative">
+                    <div className="w-full h-full rounded-full bg-neutral-200 dark:bg-neutral-700 overflow-hidden">
+                      <Image
+                        src="/my-photo.jpg"
+                        alt="Profile photo of Josué Ovalle"
+                        width={192}
+                        height={192}
+                        className="w-full h-full object-cover"
+                      />
                     </div>
                   </div>
                   <motion.div

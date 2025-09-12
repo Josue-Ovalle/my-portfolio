@@ -35,7 +35,7 @@ const Services = () => {
     <section id="services" className="section-padding bg-neutral-50 dark:bg-neutral-900/30">
       <div className="container mx-auto container-padding">
         <motion.div
-          ref={ref} 
+          ref={ref} // Attach the ref
           variants={containerVariants}
           initial="hidden"
           animate={isInView ? "visible" : "hidden"} 
@@ -53,7 +53,12 @@ const Services = () => {
           </motion.div>
 
           {/* Services Grid */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate={isInView ? "visible" : "hidden"}
+            className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
+          >
             {services.map((service, index) => {
               const IconComponent = iconComponents[service.icon];
               
@@ -61,7 +66,7 @@ const Services = () => {
                 <motion.div
                   key={service.id}
                   variants={itemVariants}
-                  {...cardHover} // This is what needs to be updated
+                  {...cardHover}
                   onHoverStart={() => setHoveredService(service.id)}
                   onHoverEnd={() => setHoveredService(null)}
                   className="card group relative overflow-hidden"
@@ -141,7 +146,7 @@ const Services = () => {
                 </motion.div>
               );
             })}
-          </div>
+          </motion.div>
 
           {/* Process Section */}
           <motion.div 

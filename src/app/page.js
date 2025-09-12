@@ -6,10 +6,22 @@ import Header from '@/components/Layout/Header';
 import Footer from '@/components/Layout/Footer';
 import Hero from '@/components/Sections/Hero';
 import About from '@/components/Sections/About';
-import Services from '@/components/Sections/Services';
-import Portfolio from '@/components/Sections/Portfolio';
-import Testimonials from '@/components/Sections/Testimonials';
-import Contact from '@/components/Sections/Contact';
+import { lazy, Suspense } from 'react';
+
+// Lazy load components that are below the fold
+const Services = lazy(() => import('@/components/Sections/Services'));
+const Portfolio = lazy(() => import('@/components/Sections/Portfolio'));
+const Testimonials = lazy(() => import('@/components/Sections/Testimonials'));
+const Contact = lazy(() => import('@/components/Sections/Contact'));
+
+const SectionLoading = () => (
+  <div className="min-h-[50vh] flex items-center justify-center">
+    <div className="text-center">
+      <div className="w-12 h-12 border-4 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+      <p className="text-neutral-600 dark:text-neutral-400">Loading section...</p>
+    </div>
+  </div>
+);
 
 export default function Home() {
   const { darkMode, setDarkMode, isLoaded } = useTheme();
@@ -36,10 +48,18 @@ export default function Home() {
       <main>
         <Hero />
         <About />
-        <Services />
-        <Portfolio />
-        <Testimonials />
-        <Contact />
+        <Suspense fallback={<SectionLoading />}>
+          <Services />
+        </Suspense>
+        <Suspense fallback={<SectionLoading />}>
+          <Portfolio />
+        </Suspense>
+        <Suspense fallback={<SectionLoading />}>
+          <Testimonials />
+        </Suspense>
+        <Suspense fallback={<SectionLoading />}>
+          <Contact />
+        </Suspense>
       </main>
       
       <Footer />

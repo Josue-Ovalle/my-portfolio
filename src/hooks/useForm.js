@@ -1,5 +1,14 @@
 import { useState, useCallback } from 'react';
 
+const sanitizeInput = (value) => {
+  if (typeof value !== 'string') return value;
+  return value
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;');
+};
+
 export const useForm = (initialValues = {}, validationRules = {}) => {
   const [values, setValues] = useState(initialValues);
   const [errors, setErrors] = useState({});
@@ -57,7 +66,8 @@ export const useForm = (initialValues = {}, validationRules = {}) => {
   }, [values, validateField, validationRules]);
 
   const handleChange = useCallback((name, value) => {
-    setValues(prev => ({ ...prev, [name]: value }));
+    const sanitizedValue = sanitizeInput(value);
+    setValues(prev => ({ ...prev, [name]: sanitizedValue }));
     
     // Clear error when user starts typing
     if (errors[name]) {

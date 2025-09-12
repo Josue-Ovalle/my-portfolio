@@ -82,13 +82,13 @@ const Contact = () => {
     {
       icon: Linkedin,
       label: 'LinkedIn',
-      href: 'https://linkedin.com/in/alexchen',
+      href: 'https://www.linkedin.com/in/josu%C3%A9-ovalle-07393437a/',
       color: 'hover:text-blue-600'
     },
     {
       icon: Twitter,
       label: 'Twitter',
-      href: 'https://twitter.com/alexchen',
+      href: 'https://x.com/JosueOvalle_',
       color: 'hover:text-blue-400'
     }
   ];
@@ -402,7 +402,7 @@ const Contact = () => {
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <motion.a
-                  href="mailto:hello@alexchen.dev"
+                  href="mailto:josueovalle064@gmail.com"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   className="bg-white text-primary-600 font-semibold px-8 py-4 rounded-lg hover:bg-primary-50 transition-colors duration-300 focus:outline-none focus:ring-4 focus:ring-white/30"
@@ -410,7 +410,7 @@ const Contact = () => {
                   Send Direct Email
                 </motion.a>
                 <motion.a
-                  href="https://calendly.com/alexchen"
+                  href="https://calendly.com/josueovalle064"
                   target="_blank"
                   rel="noopener noreferrer"
                   whileHover={{ scale: 1.05 }}

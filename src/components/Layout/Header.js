@@ -1,13 +1,16 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, Sun, Moon } from 'lucide-react';
+import { useClickOutside } from '@/hooks/useClickOutside';
 
 const Header = ({ darkMode, toggleDarkMode }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState('hero');
+  const mobileMenuRef = useRef(null);
+  useClickOutside(mobileMenuRef, () => setIsMenuOpen(false));
 
   const navigationItems = [
     { name: 'Home', href: '#hero' },
@@ -129,7 +132,7 @@ const Header = ({ darkMode, toggleDarkMode }) => {
                   initial={{ opacity: 0, y: -20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 0.1 * index }}
-                  className={`nav-link ${
+                  className={`nav-link focus-visible ${
                     activeSection === item.href.substring(1) ? 'active' : ''
                   }`}
                 >
@@ -195,6 +198,7 @@ const Header = ({ darkMode, toggleDarkMode }) => {
             
             {/* Menu Panel */}
             <motion.div
+              ref={mobileMenuRef}
               variants={mobileMenuVariants}
               initial="hidden"
               animate="visible"

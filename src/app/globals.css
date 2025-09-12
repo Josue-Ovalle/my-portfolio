@@ -20,7 +20,7 @@ html {
 
 body {
   font-family: var(--font-inter);
-  line-height: 1.7; /* Increased line height for better readability */
+  line-height: 1.8; 
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -109,9 +109,8 @@ body {
 }
 
 .heading-lg {
-  @apply text-4xl md:text-5xl lg:text-6xl font-bold leading-tight;
+  @apply text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight; 
 }
-
 .heading-md {
   @apply text-3xl md:text-4xl font-bold leading-tight;
 }

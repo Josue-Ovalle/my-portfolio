@@ -1,13 +1,18 @@
 'use client';
-import { createContext, useContext, useEffect, useState } from 'react';
+
+import { createContext, useContext, useEffect, useState, useRef } from 'react';
 
 const ThemeContext = createContext();
 
 export function ThemeProvider({ children, ...props }) {
   const [darkMode, setDarkMode] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
+  const hasInitialized = useRef(false);
 
   useEffect(() => {
+    // Only run this once on mount
+    if (hasInitialized.current) return;
+    
     const root = window.document.documentElement;
     const savedTheme = localStorage.getItem('theme');
     const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -22,7 +27,9 @@ export function ThemeProvider({ children, ...props }) {
     } else {
       root.classList.remove('dark');
     }
-  }, []);
+    
+    hasInitialized.current = true;
+  }, []); // Empty dependency array ensures this runs only once
 
   const value = {
     darkMode,

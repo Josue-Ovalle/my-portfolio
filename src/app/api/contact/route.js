@@ -1,13 +1,61 @@
 import { NextResponse } from 'next/server';
 import { Resend } from 'resend';
 
+const rateLimitMap = new Map();
+
+// Clean up old entries every hour
+setInterval(() => {
+  const now = Date.now();
+  for (const [ip, data] of rateLimitMap.entries()) {
+    if (now - data.lastRequest > 3600000) { // 1 hour
+      rateLimitMap.delete(ip);
+    }
+  }
+}, 3600000); 
+
+// Rate limiting middleware
+function checkRateLimit(ip) {
+  const now = Date.now();
+  const limit = 5; // Max 5 requests per hour
+  const windowMs = 3600000; // 1 hour
+
+  if (!rateLimitMap.has(ip)) {
+    rateLimitMap.set(ip, { count: 1, lastRequest: now });
+    return true;
+  }
+
+  const data = rateLimitMap.get(ip);
+  
+  if (now - data.lastRequest > windowMs) {
+    // Reset counter if window has passed
+    data.count = 1;
+    data.lastRequest = now;
+    return true;
+  }
+  
+  if (data.count < limit) {
+    data.count++;
+    return true;
+  }
+  
+  return false;
+}
+
 // Initialize Resend with API key from environment variables
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(request) {
   try {
+    const ip = request.headers.get('x-forwarded-for') || 'unknown';
     const body = await request.json();
     const { name, email, subject, message } = body;
+
+    if (!checkRateLimit(ip)) {
+      return NextResponse.json(
+        { error: 'Too many requests. Please try again later.' },
+        { status: 429 }
+      );
+    }
 
     // Validation
     if (!name || !email || !subject || !message) {
@@ -75,7 +123,7 @@ export async function POST(request) {
     const autoReplyData = {
       from: process.env.FROM_EMAIL || 'hello@alexchen.dev',
       to: sanitizedData.email,
-      subject: 'Thank you for your message - Alex Chen',
+      subject: 'Thank you for your message - Josué Ovalle',
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h2 style="color: #0ea5e9; border-bottom: 2px solid #0ea5e9; padding-bottom: 10px;">

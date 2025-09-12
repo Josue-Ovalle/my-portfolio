@@ -240,6 +240,9 @@ const Portfolio = () => {
 
           {/* Projects Grid */}
           <motion.div 
+            variants={containerVariants}
+            initial="hidden"
+            animate={isInView ? "visible" : "hidden"}
             layout
             className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
           >

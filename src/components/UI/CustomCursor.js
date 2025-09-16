@@ -22,13 +22,13 @@ const CustomCursor = () => {
     };
 
     const handleMouseEnter = (e) => {
-      const target = e.target;
+      const target = e.target.nodeType === 3 ? e.target.parentElement : e.target;
       
       // Check for interactive elements
       if (target.matches('button, a, [role="button"], .cursor-pointer')) {
         setIsHovering(true);
         setCursorVariant('pointer');
-        
+
         // Check for custom cursor text
         const cursorTextAttr = target.getAttribute('data-cursor-text');
         if (cursorTextAttr) {

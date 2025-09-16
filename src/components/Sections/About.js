@@ -4,7 +4,7 @@ import { motion, useInView } from 'framer-motion';
 import { useRef } from 'react';
 import { Code2, Zap, Brain, Trophy } from 'lucide-react';
 import { personalInfo, skills, timeline } from '@/data/portfolioData';
-import { containerVariants, itemVariants, skillAnimations } from '@/utils/animations';
+import { staggerContainer, staggerItem } from '@/utils/animations';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import Image from 'next/image';
 
@@ -36,7 +36,7 @@ const About = () => {
 
   const SkillBar = ({ skill, index }) => (
     <motion.div
-      variants={skillAnimations.item}
+      variants={staggerItem}
       custom={index}
       className="space-y-2"
     >
@@ -44,13 +44,13 @@ const About = () => {
         <span className="font-medium text-neutral-700 dark:text-neutral-300 leading-relaxed">
           {skill.name}
         </span>
-        <span className="text-primary-600 dark:text-primary-400">
+        <span className="text-brand-600 dark:text-brand-400">
           {skill.level}%
         </span>
       </div>
-      <div className="skill-bar">
+      <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 overflow-hidden">
         <motion.div
-          className="skill-progress"
+          className="h-full bg-gradient-to-r from-brand-500 to-brand-600 rounded-full"
           initial={{ width: 0 }}
           animate={isInView ? { width: `${skill.level}%` } : { width: 0 }}
           transition={{ duration: 1.2, delay: index * 0.1, ease: [0.4, 0, 0.2, 1] }}
@@ -64,13 +64,13 @@ const About = () => {
       <div className="container mx-auto container-padding">
         <motion.div
           ref={ref}
-          variants={containerVariants}
-          initial="hidden"
-          animate={isInView ? "visible" : "hidden"} 
+          variants={staggerContainer}
+          initial="initial"
+          animate={isInView ? "animate" : "initial"} 
           className="max-w-6xl mx-auto"
         >
           {/* Section Header */}
-          <motion.div variants={itemVariants} className="text-center mb-16">
+          <motion.div variants={staggerItem} className="text-center mb-16">
             <h2 className="heading-md text-neutral-900 dark:text-neutral-100 mb-6">
               About Me
             </h2>
@@ -82,7 +82,7 @@ const About = () => {
 
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             {/* Left Column - Profile */}
-            <motion.div variants={itemVariants} className="space-y-8">
+            <motion.div variants={staggerItem} className="space-y-8">
               {/* Profile Image */}
               <div className="flex justify-center lg:justify-start">
                 <motion.div
@@ -90,7 +90,7 @@ const About = () => {
                   transition={{ type: "spring", stiffness: 300, damping: 20 }}
                   className="relative"
                 >
-                  <div className="w-48 h-48 rounded-full bg-gradient-to-br from-primary-400 to-purple-500 p-1 relative">
+                  <div className="w-48 h-48 rounded-full bg-gradient-to-br from-brand-400 to-purple-500 p-1 relative">
                     <div className="w-full h-full rounded-full bg-neutral-200 dark:bg-neutral-700 overflow-hidden">
                       <Image
                         src="/my-photo.jpg"
@@ -104,7 +104,7 @@ const About = () => {
                   <motion.div
                     animate={{ rotate: 360 }}
                     transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                    className="absolute -inset-4 rounded-full border-2 border-dashed border-primary-300 dark:border-primary-700 opacity-50"
+                    className="absolute -inset-4 rounded-full border-2 border-dashed border-brand-300 dark:border-brand-700 opacity-50"
                   />
                 </motion.div>
               </div>
@@ -124,7 +124,7 @@ const About = () => {
                 {/* Contact Info */}
                 <div className="flex flex-wrap gap-4 text-sm text-neutral-600 dark:text-neutral-400">
                   <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-primary-500 rounded-full"></div>
+                    <div className="w-2 h-2 bg-brand-500 rounded-full"></div>
                     <span>{personalInfo.location}</span>
                   </div>
                   <div className="flex items-center gap-2">
@@ -136,15 +136,15 @@ const About = () => {
             </motion.div>
 
             {/* Right Column - Skills */}
-            <motion.div variants={itemVariants} className="space-y-8">
+            <motion.div variants={staggerItem} className="space-y-8">
               <div>
                 <h3 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100 mb-6">
                   Skills & Expertise
                 </h3>
                 <motion.div
-                  variants={skillAnimations.container}
-                  initial="hidden"
-                  animate={isInView ? "visible" : "hidden"}
+                  variants={staggerContainer}
+                  initial="initial"
+                  animate={isInView ? "animate" : "initial"}
                   className="space-y-6"
                 >
                   {skills.map((skill, index) => (
@@ -157,18 +157,18 @@ const About = () => {
 
           {/* Features Grid */}
           <motion.div 
-            variants={itemVariants}
+            variants={staggerItem}
             className="mt-20 grid md:grid-cols-2 lg:grid-cols-4 gap-8"
           >
             {features.map((feature, index) => (
               <motion.div
                 key={feature.title}
-                variants={itemVariants}
+                variants={staggerItem}
                 whileHover={{ y: -5, transition: { type: "spring", stiffness: 300 } }}
                 className="card card-hover p-6 text-center backdrop-blur-sm"
               >
-                <div className="w-12 h-12 bg-primary-100 dark:bg-primary-900/30 rounded-lg flex items-center justify-center mx-auto mb-4">
-                  <feature.icon className="w-6 h-6 text-primary-600 dark:text-primary-400" />
+                <div className="w-12 h-12 bg-brand-100 dark:bg-brand-900/30 rounded-lg flex items-center justify-center mx-auto mb-4">
+                  <feature.icon className="w-6 h-6 text-brand-600 dark:text-brand-400" />
                 </div>
                 <h3 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100 mb-3">
                   {feature.title}
@@ -181,7 +181,7 @@ const About = () => {
           </motion.div>
 
           {/* Timeline */}
-          <motion.div variants={itemVariants} className="mt-20">
+          <motion.div variants={staggerItem} className="mt-20">
             <h3 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100 mb-12 text-center">
               My Journey
             </h3>
@@ -189,11 +189,11 @@ const About = () => {
               {timeline.map((item, index) => (
                 <motion.div
                   key={item.year}
-                  variants={itemVariants}
-                  className="timeline-item"
+                  variants={staggerItem}
+                  className="mb-8 relative"
                 >
                   <div className="bg-white dark:bg-neutral-900 rounded-lg p-6 shadow-lg backdrop-blur-sm">
-                    <div className="text-sm font-semibold text-primary-600 dark:text-primary-400 mb-2">
+                    <div className="text-sm font-semibold text-brand-600 dark:text-brand-400 mb-2">
                       {item.year}
                     </div>
                     <h4 className="text-lg font-bold text-neutral-900 dark:text-neutral-100 mb-2">

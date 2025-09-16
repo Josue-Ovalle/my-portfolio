@@ -37,7 +37,7 @@ const Footer = () => {
       icon: Mail,
       href: `mailto:${personalInfo.email}`,
       label: 'Email',
-      color: 'hover:text-primary-600'
+      color: 'hover:text-brand-600'
     }
   ];
 
@@ -81,7 +81,7 @@ const Footer = () => {
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
           >
-            <div className="text-2xl font-bold text-gradient mb-4">
+            <div className="text-2xl font-bold text-gradient-brand mb-4">
               {personalInfo.name.split(' ').map(word => word[0]).join('')}
             </div>
             <p className="text-neutral-400 mb-6 leading-relaxed">
@@ -124,7 +124,7 @@ const Footer = () => {
                       e.preventDefault();
                       handleNavClick(link.href);
                     }}
-                    className="text-neutral-400 hover:text-primary-400 transition-colors duration-300 cursor-pointer"
+                    className="text-neutral-400 hover:text-brand-400 transition-colors duration-300 cursor-pointer"
                   >
                     {link.name}
                   </a>
@@ -170,7 +170,7 @@ const Footer = () => {
               </p>
               <a
                 href={`mailto:${personalInfo.email}`}
-                className="text-primary-400 hover:text-primary-300 transition-colors duration-300"
+                className="text-brand-400 hover:text-brand-300 transition-colors duration-300"
               >
                 {personalInfo.email}
               </a>
@@ -200,12 +200,12 @@ const Footer = () => {
             <input
               type="email"
               placeholder="Enter your email"
-              className="flex-1 px-4 py-2 bg-neutral-800 dark:bg-neutral-900 rounded-lg text-white placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all duration-300 backdrop-blur-sm"
+              className="flex-1 px-4 py-2 bg-neutral-800 dark:bg-neutral-900 rounded-lg text-white placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-brand-500 transition-all duration-300 backdrop-blur-sm"
             />
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="px-4 py-2 bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-neutral-900"
+              className="px-4 py-2 bg-brand-600 hover:bg-brand-700 rounded-lg transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 focus:ring-offset-neutral-900"
               aria-label="Subscribe"
             >
               <Mail className="w-5 h-5" />
@@ -249,7 +249,7 @@ const Footer = () => {
               whileInView={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.6, delay: 0.2 }}
               viewport={{ once: true }}
-              className="p-2 bg-neutral-800 dark:bg-neutral-900 hover:bg-primary-600 rounded-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="p-2 bg-neutral-800 dark:bg-neutral-900 hover:bg-brand-600 rounded-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-brand-500"
               aria-label="Scroll to top"
             >
               <ArrowUp className="w-4 h-4" />

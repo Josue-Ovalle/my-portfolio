@@ -4,7 +4,7 @@ import { motion, useInView } from 'framer-motion';
 import { useRef, useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Star, Quote } from 'lucide-react';
 import { testimonials } from '@/data/portfolioData';
-import { containerVariants, itemVariants } from '@/utils/animations';
+import { staggerContainer, staggerItem } from '@/utils/animations';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 
 const Testimonials = () => {
@@ -72,9 +72,9 @@ const Testimonials = () => {
           initial={{ scale: 0 }}
           animate={{ scale: isActive ? 1 : 0 }}
           transition={{ delay: 0.2, type: "spring", stiffness: 300 }}
-          className="w-16 h-16 bg-primary-100 dark:bg-primary-900/30 rounded-full flex items-center justify-center mx-auto mb-8"
+          className="w-16 h-16 bg-brand-100 dark:bg-brand-900/30 rounded-full flex items-center justify-center mx-auto mb-8"
         >
-          <Quote className="w-8 h-8 text-primary-600 dark:text-primary-400" />
+          <Quote className="w-8 h-8 text-brand-600 dark:text-brand-400" />
         </motion.div>
 
         {/* Testimonial Content */}
@@ -95,7 +95,7 @@ const Testimonials = () => {
           className="flex items-center justify-center space-x-4"
         >
           {/* Avatar */}
-          <div className="w-16 h-16 bg-gradient-to-br from-primary-400 to-purple-500 rounded-full flex items-center justify-center text-white text-xl font-bold">
+          <div className="w-16 h-16 bg-gradient-to-br from-brand-400 to-purple-500 rounded-full flex items-center justify-center text-white text-xl font-bold">
             {testimonial.name.charAt(0)}
           </div>
 
@@ -130,13 +130,13 @@ const Testimonials = () => {
       <div className="container mx-auto container-padding">
         <motion.div
           ref={ref} 
-          variants={containerVariants}
-          initial="hidden"
-          animate={isInView ? "visible" : "hidden"} 
+          variants={staggerContainer}
+          initial="initial"
+          animate={isInView ? "animate" : "initial"} 
           className="max-w-6xl mx-auto"
         >
           {/* Section Header */}
-          <motion.div variants={itemVariants} className="text-center mb-16">
+          <motion.div variants={staggerItem} className="text-center mb-16">
             <h2 className="heading-md text-neutral-900 dark:text-neutral-100 mb-6">
               What Clients Say
             </h2>
@@ -148,7 +148,7 @@ const Testimonials = () => {
 
           {/* Testimonials Carousel */}
           <motion.div 
-            variants={itemVariants}
+            variants={staggerItem}
             className="relative h-96 md:h-80 overflow-hidden mb-12"
           >
             {testimonials.map((testimonial, index) => (
@@ -164,7 +164,7 @@ const Testimonials = () => {
             {/* Navigation Arrows */}
             <button
               onClick={prevTestimonial}
-              className="absolute left-4 top-1/2 -translate-y-1/2 p-3 bg-white dark:bg-neutral-800 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-primary-200 dark:focus:ring-primary-800"
+              className="absolute left-4 top-1/2 -translate-y-1/2 p-3 bg-white dark:bg-neutral-800 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-brand-200 dark:focus:ring-brand-800"
               aria-label="Previous testimonial"
             >
               <ChevronLeft className="w-6 h-6 text-neutral-600 dark:text-neutral-400" />
@@ -172,7 +172,7 @@ const Testimonials = () => {
 
             <button
               onClick={nextTestimonial}
-              className="absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-white dark:bg-neutral-800 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-primary-200 dark:focus:ring-primary-800"
+              className="absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-white dark:bg-neutral-800 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-brand-200 dark:focus:ring-brand-800"
               aria-label="Next testimonial"
             >
               <ChevronRight className="w-6 h-6 text-neutral-600 dark:text-neutral-400" />
@@ -181,17 +181,17 @@ const Testimonials = () => {
 
           {/* Dots Indicator */}
           <motion.div 
-            variants={itemVariants}
+            variants={staggerItem}
             className="flex justify-center space-x-3 mb-12"
           >
             {testimonials.map((_, index) => (
               <button
                 key={index}
                 onClick={() => goToTestimonial(index)}
-                className={`w-3 h-3 rounded-full transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-primary-200 dark:focus:ring-primary-800 ${
+                className={`w-3 h-3 rounded-full transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-brand-200 dark:focus:ring-brand-800 ${
                   index === currentIndex
-                    ? 'bg-primary-600 scale-125'
-                    : 'bg-neutral-300 dark:bg-neutral-600 hover:bg-primary-400'
+                    ? 'bg-brand-600 scale-125'
+                    : 'bg-neutral-300 dark:bg-neutral-600 hover:bg-brand-400'
                 }`}
                 aria-label={`Go to testimonial ${index + 1}`}
               />
@@ -200,11 +200,11 @@ const Testimonials = () => {
 
           {/* Stats Section */}
           <motion.div 
-            variants={itemVariants}
+            variants={staggerItem}
             className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-3xl mx-auto"
           >
             <div className="text-center">
-              <div className="text-4xl font-bold text-primary-600 dark:text-primary-400 mb-2">
+              <div className="text-4xl font-bold text-brand-600 dark:text-brand-400 mb-2">
                 100%
               </div>
               <div className="text-neutral-600 dark:text-neutral-400">
@@ -212,7 +212,7 @@ const Testimonials = () => {
               </div>
             </div>
             <div className="text-center">
-              <div className="text-4xl font-bold text-primary-600 dark:text-primary-400 mb-2">
+              <div className="text-4xl font-bold text-brand-600 dark:text-brand-400 mb-2">
                 48h
               </div>
               <div className="text-neutral-600 dark:text-neutral-400">
@@ -220,7 +220,7 @@ const Testimonials = () => {
               </div>
             </div>
             <div className="text-center">
-              <div className="text-4xl font-bold text-primary-600 dark:text-primary-400 mb-2">
+              <div className="text-4xl font-bold text-brand-600 dark:text-brand-400 mb-2">
                 15+
               </div>
               <div className="text-neutral-600 dark:text-neutral-400">
@@ -231,7 +231,7 @@ const Testimonials = () => {
 
           {/* CTA Section */}
           <motion.div 
-            variants={itemVariants}
+            variants={staggerItem}
             className="mt-20 text-center"
           >
             <h3 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100 mb-4">

@@ -2,52 +2,73 @@
 
 import { motion, useInView } from 'framer-motion';
 import { useRef, useState } from 'react';
-import { Mail, Phone, MapPin, Send, Github, Linkedin, Twitter, CheckCircle, AlertCircle } from 'lucide-react';
-import { useForm, validationRules, FormField } from '@/hooks/useForm';
-import { containerVariants, itemVariants } from '@/utils/animations';
-import { useScrollAnimation } from '@/hooks/useScrollAnimation';
+import { Mail, Phone, MapPin, Send, CheckCircle, ArrowRight } from 'lucide-react';
+import { personalInfo } from '@/data/portfolioData';
+import { staggerContainer, staggerItem } from '@/utils/animations';
+import { useAdvancedScrollAnimation, use3DTilt } from '@/hooks/useAdvancedScrollAnimation';
+import AnimatedButton from '@/components/UI/AnimatedButton';
+import { useForm } from '@/hooks/useForm';
 
 const Contact = () => {
-  const { ref, isInView } = useScrollAnimation();
-  const [submitStatus, setSubmitStatus] = useState(null);
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, threshold: 0.1 });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const {
-    values,
-    errors,
-    touched,
-    isSubmitting,
-    handleChange,
-    handleBlur,
-    handleSubmit
-  } = useForm(
-    {
-      name: '',
-      email: '',
-      subject: '',
-      message: ''
+  const initialValues = {
+    name: '',
+    email: '',
+    subject: '',
+    message: '',
+    budget: '',
+    timeline: ''
+  };
+
+  const validationRules = {
+    name: {
+      required: 'Name is required'
     },
-    validationRules.contact
-  );
+    email: {
+      required: 'Email is required',
+      email: 'Email is invalid'
+    },
+    subject: {
+      required: 'Subject is required'
+    },
+    message: {
+      required: 'Message is required',
+      minLength: {
+        value: 10,
+        message: 'Message must be at least 10 characters'
+      }
+    }
+  };
 
-  const onSubmit = async (formData) => {
+  const { values, errors, handleChange, handleSubmit, reset } = useForm(initialValues, validationRules);
+
+  const handleFormSubmit = async (formValues) => {
+    setIsSubmitting(true);
+    
     try {
       const response = await fetch('/api/contact', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(formValues),
       });
-
+      
       if (response.ok) {
-        setSubmitStatus('success');
-        setTimeout(() => setSubmitStatus(null), 5000);
+        setIsSubmitted(true);
+        reset();
       } else {
         throw new Error('Failed to send message');
       }
     } catch (error) {
-      setSubmitStatus('error');
-      setTimeout(() => setSubmitStatus(null), 5000);
+      console.error('Error sending message:', error);
+      alert('Failed to send message. Please try again.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -55,168 +76,246 @@ const Contact = () => {
     {
       icon: Mail,
       label: 'Email',
-      value: 'josueovalle064@gmail.com',
-      href: 'josueovalle064@gmail.com'
+      value: personalInfo.email,
+      href: `mailto:${personalInfo.email}`,
+      description: 'Send me an email'
     },
     {
       icon: Phone,
       label: 'Phone',
-      value: '+502 4732-7768',
-      href: 'tel:+50247327768'
+      value: personalInfo.phone || '+502 1234-5678',
+      href: `tel:${personalInfo.phone || '+50212345678'}`,
+      description: 'Give me a call'
     },
     {
       icon: MapPin,
       label: 'Location',
-      value: 'Guatemala City, GT',
-      href: 'https://maps.app.goo.gl/teyFgzxK7TRU2yYX7 Guatemala City, GT'
+      value: personalInfo.location,
+      href: '#',
+      description: 'Based in Guatemala'
     }
   ];
 
-  const socialLinks = [
-    {
-      icon: Github,
-      label: 'GitHub',
-      href: 'https://github.com/Josue-Ovalle',
-      color: 'hover:text-gray-900 dark:hover:text-white'
-    },
-    {
-      icon: Linkedin,
-      label: 'LinkedIn',
-      href: 'https://www.linkedin.com/in/josu%C3%A9-ovalle-07393437a/',
-      color: 'hover:text-blue-600'
-    },
-    {
-      icon: Twitter,
-      label: 'Twitter',
-      href: 'https://x.com/JosueOvalle_',
-      color: 'hover:text-blue-400'
-    }
+  const budgetOptions = [
+    '$1,000 - $5,000',
+    '$5,000 - $10,000',
+    '$10,000 - $25,000',
+    '$25,000+'
   ];
+
+  const timelineOptions = [
+    '1-2 weeks',
+    '2-4 weeks',
+    '1-2 months',
+    '2+ months'
+  ];
+
+  if (isSubmitted) {
+    return (
+      <section id="contact" className="section-padding bg-neutral-50 dark:bg-neutral-900">
+        <div className="container mx-auto container-padding">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+            className="max-w-2xl mx-auto text-center"
+          >
+            <div className="bg-white dark:bg-neutral-800 rounded-2xl p-12 shadow-xl">
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.2, type: "spring", stiffness: 100 }}
+                className="w-20 h-20 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-6"
+              >
+                <CheckCircle className="w-10 h-10 text-green-600 dark:text-green-400" />
+              </motion.div>
+              
+              <h2 className="heading-md text-neutral-900 dark:text-neutral-100 mb-4">
+                Message Sent Successfully!
+              </h2>
+              
+              <p className="text-xl text-neutral-600 dark:text-neutral-300 mb-8">
+                Thank you for reaching out. I&apos;ll get back to you within 24 hours.
+              </p>
+              
+              <motion.button
+                onClick={() => setIsSubmitted(false)}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="btn-primary"
+              >
+                Send Another Message
+              </motion.button>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+    );
+  }
 
   return (
-    <section id="contact" className="section-padding bg-neutral-50 dark:bg-neutral-900/30">
+    <section id="contact" className="section-padding bg-neutral-50 dark:bg-neutral-900">
       <div className="container mx-auto container-padding">
         <motion.div
-          ref={ref} 
-          variants={containerVariants}
-          initial="hidden"
-          animate={isInView ? "visible" : "hidden"} 
+          ref={ref}
+          variants={staggerContainer}
+          initial="initial"
+          animate={isInView ? "animate" : "initial"}
           className="max-w-6xl mx-auto"
         >
           {/* Section Header */}
-          <motion.div variants={itemVariants} className="text-center mb-16">
-            <h2 className="heading-md text-neutral-900 dark:text-neutral-100 mb-6">
-              Get in Touch
+          <motion.div variants={staggerItem} className="text-center mb-16">
+            <h2 className="heading-lg text-neutral-900 dark:text-neutral-100 mb-6">
+              Let&apos;s Work <span className="text-gradient-brand">Together</span>
             </h2>
-            <p className="text-xl text-neutral-600 dark:text-neutral-400 max-w-3xl mx-auto">
-              Ready to build your website fast and affordable with AI-assisted development? 
-              Let&apos;s discuss your project and bring your vision to life.
+            <p className="text-xl text-neutral-600 dark:text-neutral-300 max-w-3xl mx-auto leading-relaxed">
+              Ready to bring your project to life? Let&apos;s discuss your ideas and create something amazing together.
             </p>
           </motion.div>
 
           <div className="grid lg:grid-cols-2 gap-16">
             {/* Contact Form */}
-            <motion.div variants={itemVariants} className="space-y-8">
-              <div>
+            <motion.div variants={staggerItem} className="space-y-8">
+              <div className="bg-white dark:bg-neutral-800 rounded-2xl p-8 shadow-lg">
                 <h3 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100 mb-6">
-                  Send Message
+                  Send a Message
                 </h3>
                 
-                {/* Status Messages */}
-                {submitStatus === 'success' && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="flex items-center gap-2 p-4 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded-lg mb-6"
-                  >
-                    <CheckCircle className="w-5 h-5" />
-                    <span>Message sent successfully! I&apos;ll get back to you soon.</span>
-                  </motion.div>
-                )}
-
-                {submitStatus === 'error' && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="flex items-center gap-2 p-4 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded-lg mb-6"
-                  >
-                    <AlertCircle className="w-5 h-5" />
-                    <span>Failed to send message. Please try again or email me directly.</span>
-                  </motion.div>
-                )}
-
-                <form
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    handleSubmit(onSubmit);
-                  }}
-                  className="space-y-6"
-                >
+                <form onSubmit={(e) => { e.preventDefault(); handleSubmit(handleFormSubmit); }} className="space-y-6">
                   <div className="grid md:grid-cols-2 gap-6">
-                    <FormField
-                      name="name"
-                      label="Full Name"
-                      placeholder="Your full name"
-                      value={values.name}
-                      error={errors.name}
-                      touched={touched.name}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      required
-                    />
+                    <div>
+                      <label htmlFor="name" className="form-label">
+                        Name *
+                      </label>
+                      <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        value={values.name}
+                        onChange={(e) => handleChange(e.target.name, e.target.value)}
+                        className={`form-input ${errors.name ? 'border-red-500 focus:ring-red-500' : ''}`}
+                        placeholder="Your full name"
+                      />
+                      {errors.name && (
+                        <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                          {errors.name}
+                        </p>
+                      )}
+                    </div>
                     
-                    <FormField
-                      name="email"
-                      label="Email Address"
-                      type="email"
-                      placeholder="your.email@example.com"
-                      value={values.email}
-                      error={errors.email}
-                      touched={touched.email}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      required
-                    />
+                    <div>
+                      <label htmlFor="email" className="form-label">
+                        Email *
+                      </label>
+                      <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        value={values.email}
+                        onChange={(e) => handleChange(e.target.name, e.target.value)}
+                        className={`form-input ${errors.email ? 'border-red-500 focus:ring-red-500' : ''}`}
+                        placeholder="your.email@example.com"
+                      />
+                      {errors.email && (
+                        <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                          {errors.email}
+                        </p>
+                      )}
+                    </div>
                   </div>
-
-                  <FormField
-                    name="subject"
-                    label="Subject"
-                    placeholder="Project inquiry, collaboration, etc."
-                    value={values.subject}
-                    error={errors.subject}
-                    touched={touched.subject}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    required
-                  />
-
-                  <FormField
-                    name="message"
-                    label="Message"
-                    type="textarea"
-                    placeholder="Tell me about your project, timeline, budget, and any specific requirements..."
-                    value={values.message}
-                    error={errors.message}
-                    touched={touched.message}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    required
-                    rows={6}
-                  />
-
+                  
+                  <div>
+                    <label htmlFor="subject" className="form-label">
+                      Subject *
+                    </label>
+                    <input
+                      type="text"
+                      id="subject"
+                      name="subject"
+                      value={values.subject}
+                      onChange={(e) => handleChange(e.target.name, e.target.value)}
+                      className={`form-input ${errors.subject ? 'border-red-500 focus:ring-red-500' : ''}`}
+                      placeholder="Project inquiry, consultation, etc."
+                    />
+                    {errors.subject && (
+                      <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                        {errors.subject}
+                      </p>
+                    )}
+                  </div>
+                  
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div>
+                      <label htmlFor="budget" className="form-label">
+                        Budget Range
+                      </label>
+                      <select
+                        id="budget"
+                        name="budget"
+                        value={values.budget}
+                        onChange={(e) => handleChange(e.target.name, e.target.value)}
+                        className="form-input"
+                      >
+                        <option value="">Select budget range</option>
+                        {budgetOptions.map((option) => (
+                          <option key={option} value={option}>
+                            {option}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    
+                    <div>
+                      <label htmlFor="timeline" className="form-label">
+                        Timeline
+                      </label>
+                      <select
+                        id="timeline"
+                        name="timeline"
+                        value={values.timeline}
+                        onChange={(e) => handleChange(e.target.name, e.target.value)}
+                        className="form-input"
+                      >
+                        <option value="">Select timeline</option>
+                        {timelineOptions.map((option) => (
+                          <option key={option} value={option}>
+                            {option}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <label htmlFor="message" className="form-label">
+                      Message *
+                    </label>
+                    <textarea
+                      id="message"
+                      name="message"
+                      rows={6}
+                      value={values.message}
+                      onChange={(e) => handleChange(e.target.name, e.target.value)}
+                      className={`form-textarea ${errors.message ? 'border-red-500 focus:ring-red-500' : ''}`}
+                      placeholder="Tell me about your project, goals, and how I can help you..."
+                    />
+                    {errors.message && (
+                      <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                        {errors.message}
+                      </p>
+                    )}
+                  </div>
+                  
                   <motion.button
                     type="submit"
                     disabled={isSubmitting}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className={`w-full btn-primary flex items-center justify-center gap-2 ${
-                      isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
-                    }`}
+                    className="btn-primary w-full flex items-center justify-center gap-3 text-lg disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isSubmitting ? (
                       <>
-                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
                         <span>Sending...</span>
                       </>
                     ) : (
@@ -231,195 +330,128 @@ const Contact = () => {
             </motion.div>
 
             {/* Contact Info */}
-            <motion.div variants={itemVariants} className="space-y-8">
-              <div>
+            <motion.div variants={staggerItem} className="space-y-8">
+              <div className="bg-white dark:bg-neutral-800 rounded-2xl p-8 shadow-lg">
                 <h3 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100 mb-6">
-                  Contact Information
+                  Get in Touch
                 </h3>
                 
                 <div className="space-y-6">
-                  {contactInfo.map((info) => (
-                    <motion.a
-                      key={info.label}
-                      href={info.href}
-                      target={info.href.startsWith('http') ? '_blank' : undefined}
-                      rel={info.href.startsWith('http') ? 'noopener noreferrer' : undefined}
-                      whileHover={{ x: 3 }}
-                      transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                      className="flex items-center gap-4 p-4 bg-white dark:bg-neutral-800 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 group"
-                    >
-                      <div className="w-12 h-12 bg-primary-100 dark:bg-primary-900/30 rounded-lg flex items-center justify-center group-hover:bg-primary-200 dark:group-hover:bg-primary-900/50 transition-colors duration-300">
-                        <info.icon className="w-6 h-6 text-primary-600 dark:text-primary-400" />
-                      </div>
-                      <div>
-                        <div className="text-sm text-neutral-500 dark:text-neutral-400">
-                          {info.label}
+                  {contactInfo.map((info) => {
+                    const Icon = info.icon;
+                    return (
+                      <motion.a
+                        key={info.label}
+                        href={info.href}
+                        whileHover={{ scale: 1.02, x: 4 }}
+                        className="flex items-start gap-4 p-4 rounded-xl hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors group"
+                      >
+                        <div className="w-12 h-12 bg-brand-100 dark:bg-brand-900/30 rounded-xl flex items-center justify-center group-hover:bg-brand-200 dark:group-hover:bg-brand-800/40 transition-colors">
+                          <Icon className="w-6 h-6 text-brand-600 dark:text-brand-400" />
                         </div>
-                        <div className="text-neutral-900 dark:text-neutral-100 font-medium">
-                          {info.value}
+                        <div>
+                          <h4 className="font-semibold text-neutral-900 dark:text-neutral-100 mb-1">
+                            {info.label}
+                          </h4>
+                          <p className="text-neutral-600 dark:text-neutral-300 mb-1">
+                            {info.value}
+                          </p>
+                          <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                            {info.description}
+                          </p>
                         </div>
-                      </div>
-                    </motion.a>
-                  ))}
+                      </motion.a>
+                    );
+                  })}
                 </div>
               </div>
-
-              {/* Social Links */}
-              <div>
-                <h4 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100 mb-4">
-                  Connect With Me
-                </h4>
-                <div className="flex gap-4">
-                  {socialLinks.map((social) => (
-                    <motion.a
-                      key={social.label}
-                      href={social.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      whileHover={{ scale: 1.05, y: -2 }}
-                      whileTap={{ scale: 0.95 }}
-                      className={`p-3 bg-white dark:bg-neutral-800 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 text-neutral-600 dark:text-neutral-400 ${social.color}`}
-                      aria-label={social.label}
-                    >
-                      <social.icon className="w-6 h-6" />
-                    </motion.a>
-                  ))}
+              
+              {/* Availability Status */}
+              <div className="bg-gradient-to-r from-green-500 to-emerald-600 rounded-2xl p-8 text-white">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-3 h-3 bg-white rounded-full animate-pulse" />
+                  <h3 className="text-xl font-bold">Currently Available</h3>
                 </div>
-              </div>
-
-              {/* Availability */}
-              <div className="bg-gradient-to-r from-primary-600 to-purple-600 rounded-2xl p-6 text-white">
-                <h4 className="text-xl font-bold mb-3">
-                  Currently Available
-                </h4>
-                <p className="text-primary-100 mb-4">
+                <p className="text-green-100 mb-6">
                   I&apos;m accepting new projects and would love to hear about yours. 
                   Let&apos;s create something amazing together!
                 </p>
-                <div className="flex items-center gap-2 text-sm">
-                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                <div className="flex items-center gap-2 text-sm text-green-100">
+                  <CheckCircle className="w-4 h-4" />
                   <span>Usually responds within 24 hours</span>
                 </div>
               </div>
-
-              {/* FAQ */}
-              <div>
-                <h4 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100 mb-4">
-                  Quick FAQ
-                </h4>
-                <div className="space-y-4 text-sm">
-                  <div>
-                    <div className="font-medium text-neutral-900 dark:text-neutral-100 mb-1">
-                      What&apos;s your typical project timeline?
-                    </div>
-                    <div className="text-neutral-600 dark:text-neutral-400">
-                      Most projects are completed within 2-4 weeks, depending on complexity.
-                    </div>
-                  </div>
-                  <div>
-                    <div className="font-medium text-neutral-900 dark:text-neutral-100 mb-1">
-                      Do you provide ongoing support?
-                    </div>
-                    <div className="text-neutral-600 dark:text-neutral-400">
-                      Yes! I offer maintenance packages and ongoing support for all projects.
-                    </div>
-                  </div>
-                  <div>
-                    <div className="font-medium text-neutral-900 dark:text-neutral-100 mb-1">
-                      What makes your development different?
-                    </div>
-                    <div className="text-neutral-600 dark:text-neutral-400">
-                      I leverage AI tools to accelerate development while maintaining high quality standards.
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Process Timeline */}
-              <div className="mt-8">
-                <h4 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100 mb-4">
-                  What to Expect
-                </h4>
-                <div className="space-y-3 text-sm">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-primary-100 dark:bg-primary-900/30 rounded-full flex items-center justify-center">
-                      <span className="text-primary-600 dark:text-primary-400 font-bold text-xs">1</span>
-                    </div>
-                    <div>
-                      <div className="font-medium text-neutral-900 dark:text-neutral-100">
-                        Initial Response (24h)
-                      </div>
-                      <div className="text-neutral-600 dark:text-neutral-400">
-                        I&apos;ll review your project and get back to you with questions and initial thoughts.
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-primary-100 dark:bg-primary-900/30 rounded-full flex items-center justify-center">
-                      <span className="text-primary-600 dark:text-primary-400 font-bold text-xs">2</span>
-                    </div>
-                    <div>
-                      <div className="font-medium text-neutral-900 dark:text-neutral-100">
-                        Project Proposal (2-3 days)
-                      </div>
-                      <div className="text-neutral-600 dark:text-neutral-400">
-                        Detailed proposal with timeline, features, and pricing.
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-primary-100 dark:bg-primary-900/30 rounded-full flex items-center justify-center">
-                      <span className="text-primary-600 dark:text-primary-400 font-bold text-xs">3</span>
-                    </div>
-                    <div>
-                      <div className="font-medium text-neutral-900 dark:text-neutral-100">
-                        Development & Updates
-                      </div>
-                      <div className="text-neutral-600 dark:text-neutral-400">
-                        Regular progress updates and opportunities for feedback.
-                      </div>
-                    </div>
-                  </div>
+              
+              {/* Social Links */}
+              <div className="bg-white dark:bg-neutral-800 rounded-2xl p-8 shadow-lg">
+                <h3 className="text-xl font-bold text-neutral-900 dark:text-neutral-100 mb-6">
+                  Connect with Me
+                </h3>
+                
+                <div className="flex gap-4">
+                  {Object.entries(personalInfo.social).map(([platform, url]) => (
+                    <motion.a
+                      key={platform}
+                      href={url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      whileHover={{ scale: 1.1, y: -2 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="w-12 h-12 bg-neutral-100 dark:bg-neutral-700 rounded-xl flex items-center justify-center hover:bg-brand-100 dark:hover:bg-brand-900/30 transition-colors group"
+                    >
+                      <span className="text-neutral-600 dark:text-neutral-300 group-hover:text-brand-600 dark:group-hover:text-brand-400 font-medium capitalize">
+                        {platform.charAt(0).toUpperCase()}
+                      </span>
+                    </motion.a>
+                  ))}
                 </div>
               </div>
             </motion.div>
           </div>
 
-          {/* Call to Action Section */}
-          <motion.div 
-            variants={itemVariants}
+          {/* FAQ Section */}
+          <motion.div
+            variants={staggerItem}
             className="mt-20 text-center"
           >
-            <div className="bg-gradient-to-r from-primary-600 to-purple-600 rounded-2xl p-8 md:p-12">
-              <h3 className="text-2xl md:text-3xl font-bold text-white mb-4">
-                Let&apos;s Build Something Amazing Together
-              </h3>
-              <p className="text-primary-100 text-lg mb-8 max-w-2xl mx-auto">
-                Ready to accelerate your project with AI-enhanced development? 
-                I&apos;m here to help you create a website that stands out and performs exceptionally.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <motion.a
-                  href="mailto:josueovalle064@gmail.com"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="bg-white text-primary-600 font-semibold px-8 py-4 rounded-lg hover:bg-primary-50 transition-colors duration-300 focus:outline-none focus:ring-4 focus:ring-white/30"
+            <h3 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100 mb-12">
+              Frequently Asked Questions
+            </h3>
+            
+            <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+              {[
+                {
+                  question: "What's your typical project timeline?",
+                  answer: "Most projects take 2-8 weeks depending on complexity. I'll provide a detailed timeline after our initial consultation."
+                },
+                {
+                  question: "Do you work with startups?",
+                  answer: "Absolutely! I love working with startups and understand the unique challenges of early-stage companies."
+                },
+                {
+                  question: "What's included in your services?",
+                  answer: "Full project includes design, development, testing, deployment, and post-launch support for 30 days."
+                },
+                {
+                  question: "How do we communicate during the project?",
+                  answer: "I use Slack or email for regular updates and schedule weekly video calls to review progress and gather feedback."
+                }
+              ].map((faq, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={isInView ? { opacity: 1, y: 0 } : {}}
+                  transition={{ delay: 0.2 * index, duration: 0.5 }}
+                  className="text-left bg-white dark:bg-neutral-800 rounded-xl p-6 shadow-lg"
                 >
-                  Send Direct Email
-                </motion.a>
-                <motion.a
-                  href="https://calendly.com/josueovalle064"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="bg-transparent border-2 border-white text-white font-semibold px-8 py-4 rounded-lg hover:bg-white hover:text-primary-600 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-white/30"
-                >
-                  Schedule a Call
-                </motion.a>
-              </div>
+                  <h4 className="font-semibold text-neutral-900 dark:text-neutral-100 mb-3">
+                    {faq.question}
+                  </h4>
+                  <p className="text-neutral-600 dark:text-neutral-300">
+                    {faq.answer}
+                  </p>
+                </motion.div>
+              ))}
             </div>
           </motion.div>
         </motion.div>

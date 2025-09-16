@@ -83,7 +83,7 @@ const StickyCTA = () => {
                 boxShadow: "0 10px 25px rgba(14, 165, 233, 0.3)" 
               }}
               whileTap={{ scale: 0.95 }}
-              className="bg-primary-600 hover:bg-primary-700 text-white font-semibold py-3 px-5 rounded-lg shadow-lg flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-neutral-950 relative overflow-hidden"
+              className="bg-brand-600 hover:bg-brand-700 text-white font-semibold py-3 px-5 rounded-lg shadow-lg flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-neutral-950 relative overflow-hidden"
             >
               <motion.div
                 animate={{ 

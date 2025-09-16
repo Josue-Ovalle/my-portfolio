@@ -1,29 +1,39 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import { ChevronDown, ArrowRight, Sparkles } from 'lucide-react';
-import { heroAnimations } from '@/utils/animations';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { ChevronDown, ArrowRight, Sparkles, Code2, Zap } from 'lucide-react';
+import { heroAnimations, floatingAnimation, springPresets } from '@/utils/animations';
+import { useAdvancedScrollAnimation, useParallax, use3DTilt } from '@/hooks/useAdvancedScrollAnimation';
+import AnimatedButton from '@/components/UI/AnimatedButton';
+import { useRef, useState } from 'react';
 
 const Hero = () => {
-  const handleScrollToAbout = () => {
-    const aboutSection = document.getElementById('about');
-    if (aboutSection) {
-      const header = document.querySelector('header');
-      const headerHeight = header ? header.offsetHeight : 80;
-      const offsetTop = aboutSection.offsetTop - headerHeight;
-      window.scrollTo({
-        top: offsetTop,
-        behavior: 'smooth'
-      });
-    }
+  const containerRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end start"]
+  });
+  
+  const y = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
+  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+  
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const { ref: tiltRef, transform } = use3DTilt(5, 1200);
+
+  const handleMouseMove = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    setMousePosition({
+      x: (e.clientX - rect.left - rect.width / 2) / 20,
+      y: (e.clientY - rect.top - rect.height / 2) / 20
+    });
   };
 
-  const handleContactClick = () => {
-    const contactSection = document.getElementById('contact');
-    if (contactSection) {
+  const handleScrollToSection = (sectionId) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
       const header = document.querySelector('header');
       const headerHeight = header ? header.offsetHeight : 80;
-      const offsetTop = contactSection.offsetTop - headerHeight;
+      const offsetTop = element.offsetTop - headerHeight;
       window.scrollTo({
         top: offsetTop,
         behavior: 'smooth'
@@ -32,140 +42,320 @@ const Hero = () => {
   };
 
   return (
-    <section id="hero" className="section-padding min-h-screen flex items-center justify-center relative overflow-hidden bg-pattern">
-      {/* Subtle Animated Background */}
-      <div className="absolute inset-0 -z-10">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary-50/50 via-white/50 to-purple-50/50 dark:from-neutral-950 dark:via-neutral-900 dark:to-purple-950/50" />
+    <section 
+      ref={containerRef}
+      id="hero" 
+      className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-gray-50 via-white to-blue-50 dark:from-gray-950 dark:via-gray-900 dark:to-blue-950"
+      onMouseMove={handleMouseMove}
+    >
+      {/* Enhanced Animated Background */}
+      <div className="absolute inset-0 overflow-hidden">
+        {/* Primary gradient overlay with parallax */}
         <motion.div
-          animate={{
-            background: [
-              'radial-gradient(circle at 20% 20%, rgba(14, 165, 233, 0.05) 0%, transparent 50%)',
-              'radial-gradient(circle at 80% 80%, rgba(14, 165, 233, 0.05) 0%, transparent 50%)',
-              'radial-gradient(circle at 40% 40%, rgba(14, 165, 233, 0.05) 0%, transparent 50%)',
-            ]
+          style={{ y, opacity }}
+          className="absolute inset-0 bg-gradient-to-br from-brand-500/5 via-purple-500/5 to-green-500/5"
+        />
+        
+        {/* Enhanced floating orbs with 3D effect */}
+        <motion.div
+          variants={floatingAnimation}
+          animate="animate"
+          className="absolute top-1/4 left-1/4 w-32 h-32 bg-gradient-to-r from-brand-400/20 to-purple-400/20 rounded-full blur-3xl"
+          style={{
+            transform: `translate3d(${mousePosition.x * 0.5}px, ${mousePosition.y * 0.5}px, 0)`
           }}
-          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute inset-0"
+        />
+        <motion.div
+          variants={floatingAnimation}
+          animate="animate"
+          transition={{ delay: 2 }}
+          className="absolute top-1/3 right-1/4 w-40 h-40 bg-gradient-to-r from-green-400/20 to-brand-400/20 rounded-full blur-3xl"
+          style={{
+            transform: `translate3d(${mousePosition.x * -0.3}px, ${mousePosition.y * 0.3}px, 0)`
+          }}
+        />
+        <motion.div
+          variants={floatingAnimation}
+          animate="animate"
+          transition={{ delay: 4 }}
+          className="absolute bottom-1/4 left-1/3 w-24 h-24 bg-gradient-to-r from-purple-400/20 to-green-400/20 rounded-full blur-3xl"
+          style={{
+            transform: `translate3d(${mousePosition.x * 0.8}px, ${mousePosition.y * -0.4}px, 0)`
+          }}
+        />
+        
+        {/* Animated grid pattern */}
+        <motion.div 
+          className="absolute inset-0 bg-grid opacity-30"
+          animate={{
+            backgroundPosition: ['0px 0px', '50px 50px'],
+          }}
+          transition={{
+            duration: 20,
+            repeat: Infinity,
+            ease: "linear"
+          }}
+        />
+
+        {/* Floating geometric shapes */}
+        <motion.div
+          className="absolute top-1/5 right-1/5 w-6 h-6 border-2 border-brand-400/30 rotate-45"
+          animate={{
+            rotate: [45, 405],
+            scale: [1, 1.2, 1],
+          }}
+          transition={{
+            duration: 8,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+        />
+        <motion.div
+          className="absolute bottom-1/3 right-1/6 w-4 h-4 bg-purple-400/30 rounded-full"
+          animate={{
+            y: [-10, 10, -10],
+            opacity: [0.3, 0.8, 0.3],
+          }}
+          transition={{
+            duration: 4,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
         />
       </div>
 
-      {/* Very Subtle Floating Elements */}
-      <motion.div
-        animate={{
-          y: [-6, 6, -6],
-          rotate: [0, 1, 0],
-        }}
-        transition={{
-          duration: 10,
-          repeat: Infinity,
-          ease: "easeInOut"
-        }}
-        className="absolute top-1/4 left-1/4 w-16 h-16 bg-primary-200/20 dark:bg-primary-800/20 rounded-full opacity-10 blur-lg"
-      />
-      
-      <motion.div
-        animate={{
-          y: [10, -10, 10],
-          rotate: [0, -2, 0],
-        }}
-        transition={{
-          duration: 10,
-          repeat: Infinity,
-          ease: "easeInOut"
-        }}
-        className="absolute top-1/3 right-1/4 w-24 h-24 bg-purple-200/20 dark:bg-purple-800/20 rounded-full opacity-10 blur-lg"
-      />
-
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <div className="max-w-4xl mx-auto">
-          {/* Badge */}
+      <div ref={tiltRef} className="relative z-10 container mx-auto container-padding text-center">
+        <div className="max-w-5xl mx-auto" style={{ transform }}>
+          
+          {/* Enhanced Badge with micro-interaction */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 text-sm font-medium mb-8 border border-primary-200/50 dark:border-primary-700/30"
+            {...heroAnimations.badge}
+            className="inline-flex items-center gap-3 px-6 py-3 rounded-full glass border mb-8 group cursor-pointer magnetic"
+            whileHover={{ 
+              scale: 1.05, 
+              y: -2,
+              boxShadow: "0 10px 25px rgba(14, 165, 233, 0.2)"
+            }}
+            transition={springPresets.gentle}
+            data-cursor-text="Available"
           >
-            <Sparkles className="w-4 h-4" />
-            <span>AI-Enhanced Development</span>
+            <div className="flex items-center gap-2">
+              <motion.div 
+                className="w-2 h-2 bg-green-500 rounded-full"
+                animate={{ 
+                  scale: [1, 1.2, 1],
+                  opacity: [1, 0.7, 1] 
+                }}
+                transition={{ 
+                  duration: 2, 
+                  repeat: Infinity 
+                }}
+              />
+              <motion.div
+                animate={{ rotate: [0, 12, 0] }}
+                transition={{ duration: 2, repeat: Infinity }}
+              >
+                <Sparkles className="w-4 h-4 text-brand-600 dark:text-brand-400" />
+              </motion.div>
+            </div>
+            <span className="text-sm font-semibold text-brand-700 dark:text-brand-300">
+              Available for Premium Projects
+            </span>
           </motion.div>
 
-          {/* Main Heading */}
-          <motion.h1
+          {/* Enhanced Main Heading with stagger animation */}
+          <motion.div
             {...heroAnimations.title}
-            className="heading-lg text-neutral-900 dark:text-neutral-100 mb-6"
+            className="mb-8"
+            style={{
+              transform: `translate(${mousePosition.x}px, ${mousePosition.y}px)`
+            }}
           >
-            Building{' '}
-            <span className="text-gradient">fast, modern websites</span>
-            {' '}with AI assistance
-          </motion.h1>
+            <h1 className="heading-hero text-gray-900 dark:text-white mb-4">
+              <motion.span
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.3 }}
+              >
+                Crafting{' '}
+              </motion.span>
+              <span className="relative">
+                <motion.span 
+                  className="text-gradient-brand"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.8, delay: 0.5 }}
+                >
+                  exceptional
+                </motion.span>
+                <motion.div
+                  className="absolute -inset-1 bg-gradient-to-r from-brand-600/20 to-purple-600/20 blur-lg -z-10"
+                  animate={{
+                    scale: [1, 1.1, 1],
+                    opacity: [0.3, 0.6, 0.3]
+                  }}
+                  transition={{
+                    duration: 3,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }}
+                />
+              </span>
+              <br />
+              <motion.span
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.7 }}
+              >
+                web experiences
+              </motion.span>
+            </h1>
+            
+            <motion.div 
+              className="flex items-center justify-center gap-4 text-lg text-brand-600 dark:text-brand-400 font-medium"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.9 }}
+            >
+              <motion.div
+                animate={{ rotate: [0, 360] }}
+                transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+              >
+                <Code2 className="w-5 h-5" />
+              </motion.div>
+              <span>Frontend Developer</span>
+              <div className="w-1 h-1 bg-brand-500 rounded-full" />
+              <motion.div
+                animate={{ 
+                  scale: [1, 1.2, 1],
+                  rotate: [0, 10, 0]
+                }}
+                transition={{ duration: 2, repeat: Infinity }}
+              >
+                <Zap className="w-5 h-5" />
+              </motion.div>
+              <span>Performance Focused</span>
+            </motion.div>
+          </motion.div>
 
-          {/* Subtitle */}
+          {/* Enhanced Subtitle */}
           <motion.p
             {...heroAnimations.subtitle}
-            className="text-xl md:text-2xl text-neutral-600 dark:text-neutral-400 mb-12 max-w-3xl mx-auto leading-relaxed"
+            className="text-xl md:text-2xl lg:text-3xl text-gray-600 dark:text-gray-300 mb-12 max-w-4xl mx-auto leading-relaxed font-light"
           >
-            I combine traditional coding skills with cutting-edge AI tools to deliver 
-            exceptional web experiences faster and more efficiently than ever before.
+            I create <strong className="font-semibold text-gray-900 dark:text-white">modern, performant websites</strong> that deliver measurable business results. 
+            Specializing in React, Next.js, and premium user experiences that convert visitors into customers.
           </motion.p>
 
-          {/* CTA Buttons */}
+          {/* Enhanced CTA Buttons with new AnimatedButton component */}
           <motion.div
             {...heroAnimations.cta}
-            className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16"
+            className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-16"
           >
-            <motion.button
-              onClick={handleContactClick}
-              whileHover={{ scale: 1.05, boxShadow: "0 10px 25px rgba(16, 185, 129, 0.3)" }}
-              whileTap={{ scale: 0.98 }}
-              className="btn-primary group flex items-center gap-2 text-lg px-8 py-4 rounded-full" 
+            <AnimatedButton
+              onClick={() => handleScrollToSection('contact')}
+              variant="primary"
+              size="lg"
+              magnetic={true}
+              data-cursor-text="Let's Talk"
+              className="flex items-center gap-3"
             >
-              <span>Get Started</span>
-              <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
-            </motion.button>
+              <span className="font-semibold">Start Your Project</span>
+              <motion.div
+                animate={{ x: [0, 3, 0] }}
+                transition={{ duration: 1.5, repeat: Infinity }}
+              >
+                <ArrowRight className="w-5 h-5" />
+              </motion.div>
+            </AnimatedButton>
 
-            <motion.button
-              onClick={handleScrollToAbout}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="text-neutral-600 dark:text-neutral-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-300 group flex items-center gap-2 text-lg px-6 py-3" 
+            <AnimatedButton
+              onClick={() => handleScrollToSection('portfolio')}
+              variant="secondary"
+              size="lg"
+              magnetic={true}
+              data-cursor-text="Explore"
+              className="flex items-center gap-3"
             >
-              <span>Learn More</span>
-              <ChevronDown className="w-5 h-5 transition-transform group-hover:translate-y-1" />
-            </motion.button>
+              <span className="font-semibold">View My Work</span>
+              <motion.div
+                animate={{ y: [0, 2, 0] }}
+                transition={{ duration: 1.5, repeat: Infinity }}
+              >
+                <ChevronDown className="w-5 h-5" />
+              </motion.div>
+            </AnimatedButton>
           </motion.div>
 
-          {/* Stats - Moved up for better prominence */}
+          {/* Enhanced Stats with micro-interactions */}
           <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.8 }}
-            className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-2xl mx-auto mb-12"
+            {...heroAnimations.stats}
+            className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-3xl mx-auto"
           >
-            <div className="text-center">
-              <div className="text-3xl font-bold text-accent-light dark:text-accent-dark mb-2">50%</div>
-              <div className="text-neutral-600 dark:text-neutral-400">Faster Development</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-accent-light dark:text-accent-dark mb-2">100+</div>
-              <div className="text-neutral-600 dark:text-neutral-400">Projects Completed</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-accent-light dark:text-accent-dark mb-2">24/7</div>
-              <div className="text-neutral-600 dark:text-neutral-400">AI-Powered Support</div>
-            </div>
+            {[
+              { value: "50+", label: "Projects Delivered", desc: "Successful launches" },
+              { value: "98%", label: "Client Satisfaction", desc: "Happy clients" },
+              { value: "24/7", label: "Fast Turnaround", desc: "Quick delivery" }
+            ].map((stat, index) => (
+              <motion.div
+                key={stat.label}
+                className="glass rounded-2xl p-6 hover:bg-white/20 dark:hover:bg-white/10 transition-all duration-300 group cursor-pointer card-interactive"
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.2 + index * 0.1, duration: 0.6 }}
+                whileHover={{ 
+                  y: -8, 
+                  scale: 1.02,
+                  boxShadow: "0 20px 40px rgba(14, 165, 233, 0.15)"
+                }}
+                data-cursor-text="Stat"
+              >
+                <motion.div 
+                  className="text-4xl font-bold text-gradient-brand mb-2"
+                  whileHover={{ scale: 1.1 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                >
+                  {stat.value}
+                </motion.div>
+                <div className="text-gray-700 dark:text-gray-300 font-semibold mb-1">
+                  {stat.label}
+                </div>
+                <div className="text-sm text-gray-500 dark:text-gray-400">
+                  {stat.desc}
+                </div>
+              </motion.div>
+            ))}
           </motion.div>
         </div>
       </div>
 
-      {/* Scroll Indicator */}
+      {/* Enhanced Scroll Indicator */}
       <motion.button
-        onClick={handleScrollToAbout}
-        animate={{ y: [0, 6, 0] }}
+        onClick={() => handleScrollToSection('about')}
+        className="absolute bottom-8 left-1/2 transform -translate-x-1/2 p-4 rounded-full glass hover:bg-white/20 dark:hover:bg-white/10 transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 magnetic"
+        animate={{ y: [0, 8, 0] }}
         transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute bottom-8 left-1/2 transform -translate-x-1/2 p-2 rounded-full bg-white/80 dark:bg-neutral-800/80 shadow-lg hover:shadow-xl transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 backdrop-blur-sm"
+        whileHover={{ 
+          scale: 1.1, 
+          y: -2,
+          boxShadow: "0 10px 25px rgba(14, 165, 233, 0.2)"
+        }}
         aria-label="Scroll to about section"
+        data-cursor-text="Scroll"
       >
-        <ChevronDown className="w-6 h-6 text-neutral-600 dark:text-neutral-400" />
+        <motion.div
+          animate={{ 
+            rotate: [0, 180, 360],
+            scale: [1, 0.8, 1]
+          }}
+          transition={{ 
+            duration: 3, 
+            repeat: Infinity, 
+            ease: "easeInOut" 
+          }}
+        >
+          <ChevronDown className="w-6 h-6 text-brand-600 dark:text-brand-400" />
+        </motion.div>
       </motion.button>
     </section>
   );

@@ -21,7 +21,7 @@ export default function AdvancedImage({ src, alt, width, height, className, blur
         blurDataURL={blurDataURL}
       />
       {isLoading && (
-        <div className="absolute inset-0 bg-gradient-to-br from-primary-100/30 to-purple-100/30 animate-pulse" />
+        <div className="absolute inset-0 bg-gradient-to-br from-brand-100/30 to-purple-100/30 animate-pulse" />
       )}
     </div>
   );

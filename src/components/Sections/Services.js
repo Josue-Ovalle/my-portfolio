@@ -2,9 +2,9 @@
 
 import { motion, useInView } from 'framer-motion';
 import { useRef, useState } from 'react';
-import { ArrowRight, Check, Globe, Code2, Palette, ShoppingCart, Zap, Brain } from 'lucide-react';
+import { ArrowRight, Check, Globe, Code2, Palette, ShoppingCart, Zap, Brain, Settings } from 'lucide-react';
 import { services } from '@/data/portfolioData';
-import { containerVariants, itemVariants, cardHover } from '@/utils/animations';
+import { staggerContainer, staggerItem, cardHover } from '@/utils/animations';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 
 const Services = () => {
@@ -17,7 +17,8 @@ const Services = () => {
     Palette,
     ShoppingCart,
     Zap,
-    Brain
+    Brain,
+    Settings
   };
 
   const handleContactClick = () => {
@@ -36,13 +37,13 @@ const Services = () => {
       <div className="container mx-auto container-padding">
         <motion.div
           ref={ref} // Attach the ref
-          variants={containerVariants}
-          initial="hidden"
-          animate={isInView ? "visible" : "hidden"} 
+          variants={staggerContainer}
+          initial="initial"
+          animate={isInView ? "animate" : "initial"} 
           className="max-w-6xl mx-auto"
         >
           {/* Section Header */}
-          <motion.div variants={itemVariants} className="text-center mb-16">
+          <motion.div variants={staggerItem} className="text-center mb-16">
             <h2 className="heading-md text-neutral-900 dark:text-neutral-100 mb-6">
               Services I Offer
             </h2>
@@ -54,9 +55,9 @@ const Services = () => {
 
           {/* Services Grid */}
           <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            animate={isInView ? "visible" : "hidden"}
+            variants={staggerContainer}
+            initial="initial"
+            animate={isInView ? "animate" : "initial"}
             className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
           >
             {services.map((service, index) => {
@@ -65,7 +66,7 @@ const Services = () => {
               return (
                 <motion.div
                   key={service.id}
-                  variants={itemVariants}
+                  variants={staggerItem}
                   {...cardHover}
                   onHoverStart={() => setHoveredService(service.id)}
                   onHoverEnd={() => setHoveredService(null)}
@@ -78,21 +79,21 @@ const Services = () => {
                       opacity: hoveredService === service.id ? 0.1 : 0 
                     }}
                     transition={{ duration: 0.3 }}
-                    className="absolute inset-0 bg-gradient-to-br from-primary-500 to-purple-500"
+                    className="absolute inset-0 bg-gradient-to-br from-brand-500 to-purple-500"
                   />
 
                   <div className="relative p-8">
                     {/* Icon */}
                     <motion.div 
-                      className="w-14 h-14 bg-primary-100 dark:bg-primary-900/30 rounded-xl flex items-center justify-center mb-6 group-hover:bg-primary-200 dark:group-hover:bg-primary-900/50 transition-colors duration-300"
+                      className="w-14 h-14 bg-brand-100 dark:bg-brand-900/30 rounded-xl flex items-center justify-center mb-6 group-hover:bg-brand-200 dark:group-hover:bg-brand-900/50 transition-colors duration-300"
                       whileHover={{ rotate: 3, scale: 1.05 }} // Updated from rotate: 5, scale: 1.1
                       transition={{ type: "spring", stiffness: 300, damping: 20 }}
                     >
-                      <IconComponent className="w-7 h-7 text-primary-600 dark:text-primary-400" />
+                      <IconComponent className="w-7 h-7 text-brand-600 dark:text-brand-400" />
                     </motion.div>
 
                     {/* Content */}
-                    <h3 className="text-xl font-bold text-neutral-900 dark:text-neutral-100 mb-4 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors duration-300">
+                    <h3 className="text-xl font-bold text-neutral-900 dark:text-neutral-100 mb-4 group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors duration-300">
                       {service.title}
                     </h3>
                     
@@ -110,7 +111,7 @@ const Services = () => {
                           transition={{ duration: 0.3, delay: index * 0.1 + featureIndex * 0.05 }}
                           className="flex items-center gap-2 text-sm text-neutral-600 dark:text-neutral-400"
                         >
-                          <Check className="w-4 h-4 text-primary-600 dark:text-primary-400 flex-shrink-0" />
+                          <Check className="w-4 h-4 text-brand-600 dark:text-brand-400 flex-shrink-0" />
                           <span>{feature}</span>
                         </motion.li>
                       ))}
@@ -118,7 +119,7 @@ const Services = () => {
 
                     {/* Price */}
                     <div className="flex items-center justify-between">
-                      <span className="text-lg font-bold text-primary-600 dark:text-primary-400">
+                      <span className="text-lg font-bold text-brand-600 dark:text-brand-400">
                         {service.price}
                       </span>
                       
@@ -126,7 +127,7 @@ const Services = () => {
                         onClick={handleContactClick}
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        className="flex items-center gap-2 text-sm font-semibold text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 transition-colors duration-300"
+                        className="flex items-center gap-2 text-sm font-semibold text-brand-600 dark:text-brand-400 hover:text-brand-700 dark:hover:text-brand-300 transition-colors duration-300"
                       >
                         Get Quote
                         <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
@@ -141,7 +142,7 @@ const Services = () => {
                       scaleX: hoveredService === service.id ? 1 : 0 
                     }}
                     transition={{ duration: 0.3 }}
-                    className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-primary-500 to-purple-500 origin-left"
+                    className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-brand-500 to-purple-500 origin-left"
                   />
                 </motion.div>
               );
@@ -150,7 +151,7 @@ const Services = () => {
 
           {/* Process Section */}
           <motion.div 
-            variants={itemVariants}
+            variants={staggerItem}
             className="mt-20 text-center"
           >
             <h3 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100 mb-12">
@@ -182,11 +183,11 @@ const Services = () => {
               ].map((phase, index) => (
                 <motion.div
                   key={phase.step}
-                  variants={itemVariants}
+                  variants={staggerItem}
                   className="text-center"
                 >
-                  <div className="w-16 h-16 bg-primary-100 dark:bg-primary-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <span className="text-xl font-bold text-primary-600 dark:text-primary-400">
+                  <div className="w-16 h-16 bg-brand-100 dark:bg-brand-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span className="text-xl font-bold text-brand-600 dark:text-brand-400">
                       {phase.step}
                     </span>
                   </div>
@@ -203,14 +204,14 @@ const Services = () => {
 
           {/* CTA Section */}
           <motion.div 
-            variants={itemVariants}
+            variants={staggerItem}
             className="mt-20 text-center"
           >
-            <div className="bg-gradient-to-r from-primary-600 to-purple-600 rounded-2xl p-8 md:p-12">
+            <div className="bg-gradient-to-r from-brand-600 to-purple-600 rounded-2xl p-8 md:p-12">
               <h3 className="text-2xl md:text-3xl font-bold text-white mb-4">
                 Ready to Start Your Project?
               </h3>
-              <p className="text-primary-100 text-lg mb-8 max-w-2xl mx-auto">
+              <p className="text-brand-100 text-lg mb-8 max-w-2xl mx-auto">
                 Let&apos;s discuss how AI-enhanced development can accelerate your project 
                 and deliver exceptional results within your budget.
               </p>
@@ -218,7 +219,7 @@ const Services = () => {
                 onClick={handleContactClick}
                 whileHover={{ scale: 1.05, boxShadow: "0 10px 25px rgba(0,0,0,0.2)" }}
                 whileTap={{ scale: 0.95 }}
-                className="bg-white text-primary-600 font-semibold px-8 py-4 rounded-lg hover:bg-primary-50 transition-colors duration-300 focus:outline-none focus:ring-4 focus:ring-white/30"
+                className="bg-white text-brand-600 font-semibold px-8 py-4 rounded-lg hover:bg-brand-50 transition-colors duration-300 focus:outline-none focus:ring-4 focus:ring-white/30"
               >
                 Get in Touch
               </motion.button>

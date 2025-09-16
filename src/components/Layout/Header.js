@@ -112,7 +112,7 @@ const Header = ({ darkMode, toggleDarkMode }) => {
                 e.preventDefault();
                 handleNavClick('#hero');
               }}
-              className="text-2xl font-bold text-gradient focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 rounded"
+              className="text-2xl font-bold text-gradient-brand focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 rounded"
             >
               AC
             </a>
@@ -152,7 +152,7 @@ const Header = ({ darkMode, toggleDarkMode }) => {
               transition={{ duration: 0.6, delay: 0.3 }}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
-              className="p-2 rounded-lg bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+              className="p-2 rounded-lg bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:text-brand-600 dark:hover:text-brand-400 transition-colors duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
               aria-label="Toggle dark mode"
             >
               {darkMode ? (
@@ -170,7 +170,7 @@ const Header = ({ darkMode, toggleDarkMode }) => {
               transition={{ duration: 0.6, delay: 0.4 }}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
-              className="md:hidden p-2 rounded-lg bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+              className="md:hidden p-2 rounded-lg bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:text-brand-600 dark:hover:text-brand-400 transition-colors duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
               aria-label="Toggle menu"
             >
               {isMenuOpen ? (
@@ -210,7 +210,7 @@ const Header = ({ darkMode, toggleDarkMode }) => {
                 <div className="flex justify-end mb-8">
                   <button
                     onClick={() => setIsMenuOpen(false)}
-                    className="p-2 rounded-lg bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+                    className="p-2 rounded-lg bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:text-brand-600 dark:hover:text-brand-400 transition-colors duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
                     aria-label="Close menu"
                   >
                     <X className="w-6 h-6" />

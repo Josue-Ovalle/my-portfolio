@@ -1,6 +1,6 @@
 'use client';
 
-import { useTheme } from '@/providers/ThemeProvider';
+import { useTheme } from '@/providers/ThemeProviders';
 import StickyCTA from '@/components/Layout/StickyCTA';
 import Header from '@/components/Layout/Header';
 import Footer from '@/components/Layout/Footer';
@@ -8,30 +8,54 @@ import Hero from '@/components/Sections/Hero';
 import Skills from '@/components/Sections/Skills';
 import About from '@/components/Sections/About';
 import { lazy, Suspense } from 'react';
+import { LazyComponentWrapper, createLazyComponent } from '@/components/LazyComponentWrapper';
 
-// Lazy load components that are below the fold
-const Services = lazy(() => import('@/components/Sections/Services'));
-// const Portfolio = lazy(() => import('@/components/Sections/Portfolio')); // Commented until I got one project done.
-// const Testimonials = lazy(() => import('@/components/Sections/Testimonials')); // Commented until I got one testimonial.
-const Contact = lazy(() => import('@/components/Sections/Contact'));
+// Create lazy components with proper error handling
+const Services = createLazyComponent(
+  () => import('@/components/Sections/Services'),
+  'Services'
+);
 
-const SectionLoading = () => (
+const HonestTestimonials = createLazyComponent(
+  () => import('@/components/Sections/HonestTestimonials'),
+  'Achievements'
+);
+
+const Contact = createLazyComponent(
+  () => import('@/components/Sections/Contact'),
+  'Contact'
+);
+
+// Enhanced loading component with better UX
+const SectionLoading = ({ name = 'section' }) => (
   <div 
-    className="min-h-[50vh] flex items-center justify-center" 
+    className="min-h-[60vh] flex items-center justify-center" 
     role="status" 
-    aria-label="Loading content"
+    aria-label={`Loading ${name} section`}
   >
     <div className="text-center">
-      <div 
-        className="w-12 h-12 border-4 border-brand-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" 
-        aria-hidden="true"
-      />
-      <p className="text-neutral-600 dark:text-neutral-400">Loading section...</p>
+      <div className="relative">
+        <div 
+          className="w-16 h-16 border-4 border-brand-500/20 border-t-brand-500 rounded-full animate-spin mx-auto mb-6" 
+          aria-hidden="true"
+        />
+        <div className="absolute inset-0 w-16 h-16 border-4 border-transparent border-l-brand-300 rounded-full animate-spin mx-auto" 
+             style={{ animationDirection: 'reverse', animationDuration: '1.5s' }} />
+      </div>
+      <h3 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100 mb-2">
+        Loading {name}
+      </h3>
+      <p className="text-neutral-600 dark:text-neutral-400">
+        Preparing content for you...
+      </p>
+      <div className="mt-4 w-32 h-1 bg-neutral-200 dark:bg-neutral-700 rounded-full mx-auto overflow-hidden">
+        <div className="h-full bg-brand-500 rounded-full animate-pulse" style={{ width: '60%' }} />
+      </div>
     </div>
   </div>
 );
 
-// Coming Soon Section Component
+// Coming Soon Component for Portfolio
 const ComingSoon = ({ title, description }) => (
   <section 
     className="section-padding bg-neutral-50 dark:bg-neutral-900/30"
@@ -53,7 +77,7 @@ const ComingSoon = ({ title, description }) => (
             <span className="text-3xl">🚧</span>
           </div>
           <h3 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100 mb-4">
-            Coming Soon
+            In Development
           </h3>
           <p className="text-lg text-neutral-600 dark:text-neutral-400 mb-8 leading-relaxed">
             {description}
@@ -63,14 +87,13 @@ const ComingSoon = ({ title, description }) => (
               className="w-2 h-2 bg-brand-500 rounded-full animate-pulse" 
               aria-hidden="true"
             />
-            <span>In Development</span>
+            <span>Working on authentic case studies</span>
           </div>
         </div>
       </div>
     </div>
   </section>
 );
-
 
 export default function Home() {
   const { darkMode, setDarkMode, isLoaded } = useTheme();
@@ -88,6 +111,7 @@ export default function Home() {
     }
   };
 
+  // Enhanced loading state
   if (!isLoaded) {
     return (
       <div 
@@ -96,11 +120,18 @@ export default function Home() {
         aria-label="Loading portfolio website"
       >
         <div className="text-center">
-          <div 
-            className="w-16 h-16 border-4 border-brand-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" 
-            aria-hidden="true"
-          />
-          <p className="text-neutral-600 dark:text-neutral-400">Loading...</p>
+          <div className="relative mb-8">
+            <div 
+              className="w-20 h-20 border-4 border-brand-500/20 border-t-brand-500 rounded-full animate-spin mx-auto" 
+              aria-hidden="true"
+            />
+            <div className="absolute inset-0 w-20 h-20 border-4 border-transparent border-r-brand-300 rounded-full animate-spin mx-auto" 
+                 style={{ animationDirection: 'reverse', animationDuration: '2s' }} />
+          </div>
+          <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100 mb-2">
+            JosuÉ Ovalle
+          </h1>
+          <p className="text-neutral-600 dark:text-neutral-400">Loading portfolio...</p>
           <span className="sr-only">Loading portfolio website</span>
         </div>
       </div>
@@ -116,25 +147,33 @@ export default function Home() {
         <Skills />
         <About />
         
-        <Suspense fallback={<SectionLoading />}>
+        <LazyComponentWrapper 
+          fallback={<SectionLoading name="Services" />}
+          name="Services"
+        >
           <Services />
-        </Suspense>
+        </LazyComponentWrapper>
         
-        {/* Portfolio Section - Coming Soon */}
+        {/* Portfolio Section - Honest approach */}
         <ComingSoon 
-          title="Portfolio"
-          description="I'm currently working on showcasing my best projects with detailed case studies, metrics, and real results. This section will feature live projects you can explore and the impact they've created."
+          title="Portfolio Case Studies"
+          description="I'm currently developing detailed case studies of real projects with authentic metrics and client outcomes. Rather than showcase placeholder projects, I'm focusing on building genuine client work that demonstrates real business impact."
         />
         
-        {/* Testimonials Section - Coming Soon */}
-        <ComingSoon 
-          title="Client Testimonials"
-          description="Real testimonials from actual clients will be featured here once I've completed more client projects. I believe in authentic feedback over fabricated reviews."
-        />
+        {/* Replace Testimonials with Achievements */}
+        <LazyComponentWrapper 
+          fallback={<SectionLoading name="Achievements" />}
+          name="Achievements"
+        >
+          <HonestTestimonials />
+        </LazyComponentWrapper>
         
-        <Suspense fallback={<SectionLoading />}>
+        <LazyComponentWrapper 
+          fallback={<SectionLoading name="Contact" />}
+          name="Contact"
+        >
           <Contact />
-        </Suspense>
+        </LazyComponentWrapper>
       </main>
       
       <Footer />

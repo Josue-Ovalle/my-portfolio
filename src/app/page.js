@@ -1,6 +1,6 @@
 'use client';
 
-import { useTheme } from '@/providers/ThemeProviders';
+import { useTheme } from '@/providers/ThemeProvider';
 import StickyCTA from '@/components/Layout/StickyCTA';
 import Header from '@/components/Layout/Header';
 import Footer from '@/components/Layout/Footer';

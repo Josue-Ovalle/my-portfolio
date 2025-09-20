@@ -20,7 +20,6 @@ const jetbrainsMono = JetBrains_Mono({
   variable: '--font-jetbrains-mono'
 })
 
-// ✅ Enhanced Metadata with comprehensive SEO optimization
 export const metadata = {
   metadataBase: new URL('https://josueovalle.com'),
   title: {
@@ -125,32 +124,57 @@ export const metadata = {
   },
 }
 
-// Viewport exportado separado
+// Viewport exported separately
 export const viewport = {
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1,
+  maximumScale: 5, 
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#0ea5e9' },
+    { media: '(prefers-color-scheme: dark)', color: '#0ea5e9' }
+  ],
 }
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`} suppressHydrationWarning>
+    <html 
+      lang="en" 
+      className={`${inter.variable} ${jetbrainsMono.variable}`} 
+      suppressHydrationWarning
+    >
       <head>
         <link rel="icon" href="/favicon.ico" />
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
         <link rel="manifest" href="/site.webmanifest" />
-        <meta name="theme-color" content="#0ea5e9" />
         <meta name="format-detection" content="telephone=no" />
+        
+        {/* Preconnect for performance */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </head>
       <body className="font-sans bg-white dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 transition-colors duration-300">
+        {/* Screen reader announcement for theme changes */}
+        <div 
+          id="theme-announcement" 
+          className="sr-only" 
+          role="status" 
+          aria-live="polite" 
+          aria-atomic="true"
+        />
+        
         <StructuredData />
         <ThemeProvider>
           <ErrorBoundary>
             <CustomCursor />
             <ScrollProgress />
-            {children}
+            
+            {/* Main application content with proper landmark structure */}
+            <div id="app" className="min-h-screen">
+              {children}
+            </div>
+            
             <PerformanceMonitor />
             <Analytics />
           </ErrorBoundary>

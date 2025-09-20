@@ -1,10 +1,11 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
+import type { OptimizedImageProps } from '@/types';
 
-const OptimizedImage = ({ 
+const OptimizedImage: React.FC<OptimizedImageProps> = ({ 
   src, 
   alt, 
   width, 
@@ -21,17 +22,36 @@ const OptimizedImage = ({
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
   const [currentSrc, setCurrentSrc] = useState(src);
-  const imgRef = useRef();
+  const imgRef = useRef<HTMLImageElement>(null);
 
-  // Create a simple blur placeholder
-  const blurDataURL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIiBmaWxsPSIjZjNmNGY2Ii8+Cjwvc3ZnPgo=";
+  // Generate a proper base64 blur placeholder
+  const generateBlurDataURL = useCallback((w: number, h: number): string => {
+    const canvas = document.createElement('canvas');
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = canvas.getContext('2d');
+    
+    if (ctx) {
+      // Create a subtle gradient blur
+      const gradient = ctx.createLinearGradient(0, 0, w, h);
+      gradient.addColorStop(0, '#f3f4f6');
+      gradient.addColorStop(1, '#e5e7eb');
+      
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, w, h);
+    }
+    
+    return canvas.toDataURL();
+  }, []);
 
-  const handleImageLoad = () => {
+  const blurDataURL = generateBlurDataURL(40, 40);
+
+  const handleImageLoad = useCallback(() => {
     setIsLoading(false);
     setHasError(false);
-  };
+  }, []);
 
-  const handleImageError = () => {
+  const handleImageError = useCallback(() => {
     setHasError(true);
     setIsLoading(false);
     
@@ -41,17 +61,17 @@ const OptimizedImage = ({
       setIsLoading(true);
       setHasError(false);
     }
-  };
+  }, [fallbackSrc, currentSrc]);
 
   // Generate initials from alt text as ultimate fallback
-  const getInitials = (text) => {
+  const getInitials = useCallback((text: string): string => {
     return text
       .split(' ')
       .map(word => word.charAt(0))
       .join('')
       .substring(0, 2)
       .toUpperCase();
-  };
+  }, []);
 
   const containerClasses = `relative overflow-hidden ${className}`;
   const aspectRatioClasses = {
@@ -62,7 +82,7 @@ const OptimizedImage = ({
     'auto': ''
   };
 
-  // If there's an error and no fallback, show initials placeholder
+  // Error state with initials fallback
   if (hasError && (!fallbackSrc || currentSrc === fallbackSrc)) {
     return (
       <div className={`${containerClasses} ${aspectRatioClasses[aspectRatio]} bg-gradient-to-br from-brand-100 to-brand-200 dark:from-brand-900 dark:to-brand-800 flex items-center justify-center`}>
@@ -77,7 +97,7 @@ const OptimizedImage = ({
     <div className={`${containerClasses} ${aspectRatioClasses[aspectRatio]}`}>
       {/* Loading Skeleton */}
       {isLoading && showSkeleton && (
-        <div className="absolute inset-0 bg-gradient-to-r from-neutral-200 via-neutral-100 to-neutral-200 dark:from-neutral-800 dark:via-neutral-700 dark:to-neutral-800 animate-pulse">
+        <div className="absolute inset-0 bg-gradient-to-r from-neutral-200 via-neutral-100 to-neutral-200 dark:from-neutral-800 dark:via-neutral-700 dark:to-neutral-800">
           <motion.div
             className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 dark:via-white/10 to-transparent"
             initial={{ x: '-100%' }}

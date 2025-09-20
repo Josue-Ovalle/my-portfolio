@@ -16,9 +16,16 @@ const Services = lazy(() => import('@/components/Sections/Services'));
 const Contact = lazy(() => import('@/components/Sections/Contact'));
 
 const SectionLoading = () => (
-  <div className="min-h-[50vh] flex items-center justify-center" role="status" aria-label="Loading content">
+  <div 
+    className="min-h-[50vh] flex items-center justify-center" 
+    role="status" 
+    aria-label="Loading content"
+  >
     <div className="text-center">
-      <div className="w-12 h-12 border-4 border-brand-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" aria-hidden="true"></div>
+      <div 
+        className="w-12 h-12 border-4 border-brand-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" 
+        aria-hidden="true"
+      />
       <p className="text-neutral-600 dark:text-neutral-400">Loading section...</p>
     </div>
   </div>
@@ -26,15 +33,24 @@ const SectionLoading = () => (
 
 // Coming Soon Section Component
 const ComingSoon = ({ title, description }) => (
-  <section className="section-padding bg-neutral-50 dark:bg-neutral-900/30">
+  <section 
+    className="section-padding bg-neutral-50 dark:bg-neutral-900/30"
+    aria-labelledby={`${title.toLowerCase().replace(/\s+/g, '-')}-heading`}
+  >
     <div className="container mx-auto container-padding">
       <div className="max-w-4xl mx-auto text-center">
-        <h2 className="heading-md text-neutral-900 dark:text-neutral-100 mb-6">
+        <h2 
+          id={`${title.toLowerCase().replace(/\s+/g, '-')}-heading`}
+          className="heading-md text-neutral-900 dark:text-neutral-100 mb-6"
+        >
           {title}
         </h2>
         <div className="bg-white dark:bg-neutral-800 rounded-2xl p-12 shadow-lg border border-neutral-200 dark:border-neutral-700">
-          <div className="w-20 h-20 bg-brand-100 dark:bg-brand-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
-            <span className="text-3xl" aria-hidden="true">🚧</span>
+          <div 
+            className="w-20 h-20 bg-brand-100 dark:bg-brand-900/30 rounded-full flex items-center justify-center mx-auto mb-6"
+            aria-hidden="true"
+          >
+            <span className="text-3xl">🚧</span>
           </div>
           <h3 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100 mb-4">
             Coming Soon
@@ -43,7 +59,10 @@ const ComingSoon = ({ title, description }) => (
             {description}
           </p>
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-brand-100 dark:bg-brand-900/30 text-brand-700 dark:text-brand-300 rounded-full text-sm font-medium">
-            <div className="w-2 h-2 bg-brand-500 rounded-full animate-pulse" aria-hidden="true"></div>
+            <div 
+              className="w-2 h-2 bg-brand-500 rounded-full animate-pulse" 
+              aria-hidden="true"
+            />
             <span>In Development</span>
           </div>
         </div>
@@ -58,13 +77,29 @@ export default function Home() {
 
   const toggleDarkMode = () => {
     setDarkMode(!darkMode);
+    
+    // Announce theme change to screen readers
+    const announcement = document.getElementById('theme-announcement');
+    if (announcement) {
+      announcement.textContent = `Switched to ${!darkMode ? 'dark' : 'light'} mode`;
+      setTimeout(() => {
+        announcement.textContent = '';
+      }, 1000);
+    }
   };
 
   if (!isLoaded) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-white dark:bg-neutral-950">
+      <div 
+        className="min-h-screen flex items-center justify-center bg-white dark:bg-neutral-950"
+        role="status"
+        aria-label="Loading portfolio website"
+      >
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-brand-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" aria-hidden="true"></div>
+          <div 
+            className="w-16 h-16 border-4 border-brand-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" 
+            aria-hidden="true"
+          />
           <p className="text-neutral-600 dark:text-neutral-400">Loading...</p>
           <span className="sr-only">Loading portfolio website</span>
         </div>

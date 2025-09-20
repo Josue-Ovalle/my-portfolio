@@ -10,6 +10,8 @@ const Header = ({ darkMode, toggleDarkMode }) => {
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState('hero');
   const mobileMenuRef = useRef(null);
+  const skipLinkRef = useRef(null);
+  
   useClickOutside(mobileMenuRef, () => setIsMenuOpen(false));
 
   const navigationItems = [
@@ -17,7 +19,6 @@ const Header = ({ darkMode, toggleDarkMode }) => {
     { name: 'About', href: '#about' },
     { name: 'Services', href: '#services' },
     { name: 'Portfolio', href: '#portfolio' },
-    { name: 'Testimonials', href: '#testimonials' },
     { name: 'Contact', href: '#contact' },
   ];
 
@@ -48,7 +49,8 @@ const Header = ({ darkMode, toggleDarkMode }) => {
   }, []);
 
   // Handle smooth scroll to section
-  const handleNavClick = (href) => {
+  const handleNavClick = (href, event) => {
+    event.preventDefault();
     const element = document.querySelector(href);
     if (element) {
       // Get the header height dynamically
@@ -63,6 +65,39 @@ const Header = ({ darkMode, toggleDarkMode }) => {
     }
     setIsMenuOpen(false);
   };
+
+  // Handle keyboard navigation
+  const handleKeyDown = (event, href) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      handleNavClick(href, event);
+    }
+  };
+
+  // Handle escape key for mobile menu
+  useEffect(() => {
+    const handleEscapeKey = (event) => {
+      if (event.key === 'Escape' && isMenuOpen) {
+        setIsMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('keydown', handleEscapeKey);
+    return () => document.removeEventListener('keydown', handleEscapeKey);
+  }, [isMenuOpen]);
+
+  // Focus management for mobile menu
+  useEffect(() => {
+    if (isMenuOpen) {
+      // Focus trap in mobile menu
+      const focusableElements = mobileMenuRef.current?.querySelectorAll(
+        'a, button, [tabindex]:not([tabindex="-1"])'
+      );
+      if (focusableElements && focusableElements.length > 0) {
+        focusableElements[0].focus();
+      }
+    }
+  }, [isMenuOpen]);
 
   const headerVariants = {
     hidden: { y: -100, opacity: 0 },
@@ -87,169 +122,204 @@ const Header = ({ darkMode, toggleDarkMode }) => {
   };
 
   return (
-    <motion.header
-      variants={headerVariants}
-      initial="hidden"
-      animate="visible"
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled 
-          ? 'bg-white/80 dark:bg-neutral-950/80 backdrop-blur-md shadow-sm border-b border-neutral-200/50 dark:border-neutral-800/50' 
-          : 'bg-transparent'
-      }`}
-    >
-      <nav className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 md:h-20">
-          {/* Logo */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="flex-shrink-0"
-          >
-            <a 
-              href="#hero"
-              onClick={(e) => {
-                e.preventDefault();
-                handleNavClick('#hero');
-              }}
-              className="text-2xl font-bold text-gradient-brand focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 rounded"
-            >
-              AC
-            </a>
-          </motion.div>
+    <>
+      {/* Skip to main content link */}
+      <a
+        ref={skipLinkRef}
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-2 focus:bg-brand-600 focus:text-white focus:rounded focus:shadow-lg"
+        onFocus={(e) => e.target.scrollIntoView({ behavior: 'smooth', block: 'center' })}
+      >
+        Skip to main content
+      </a>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:block">
-            <div className="ml-10 flex items-baseline space-x-8">
-              {navigationItems.map((item, index) => (
-                <motion.a
-                  key={item.name}
-                  href={item.href}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleNavClick(item.href);
-                  }}
-                  initial={{ opacity: 0, y: -20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.1 * index }}
-                  className={`nav-link focus-visible ${
-                    activeSection === item.href.substring(1) ? 'active' : ''
-                  }`}
-                >
-                  {item.name}
-                </motion.a>
-              ))}
-            </div>
-          </div>
-
-          {/* Dark Mode Toggle & Mobile Menu Button */}
-          <div className="flex items-center space-x-4">
-            {/* Dark Mode Toggle */}
-            <motion.button
-              onClick={toggleDarkMode}
+      <motion.header
+        variants={headerVariants}
+        initial="hidden"
+        animate="visible"
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+          scrolled 
+            ? 'bg-white/90 dark:bg-neutral-950/90 backdrop-blur-lg shadow-sm border-b border-neutral-200/50 dark:border-neutral-800/50' 
+            : 'bg-transparent'
+        }`}
+        role="banner"
+      >
+        <nav className="container mx-auto px-4 sm:px-6 lg:px-8" role="navigation" aria-label="Main navigation">
+          <div className="flex items-center justify-between h-16 md:h-20">
+            {/* Logo */}
+            <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-              className="p-2 rounded-lg bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:text-brand-600 dark:hover:text-brand-400 transition-colors duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
-              aria-label="Toggle dark mode"
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="flex-shrink-0"
             >
-              {darkMode ? (
-                <Sun className="w-5 h-5" />
-              ) : (
-                <Moon className="w-5 h-5" />
-              )}
-            </motion.button>
+              <a 
+                href="#hero"
+                onClick={(e) => handleNavClick('#hero', e)}
+                onKeyDown={(e) => handleKeyDown(e, '#hero')}
+                className="text-2xl font-bold text-gradient-brand focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-neutral-950 rounded-sm px-1"
+                aria-label="Josué Ovalle - Go to home section"
+              >
+                JO
+              </a>
+            </motion.div>
 
-            {/* Mobile menu button */}
-            <motion.button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-              className="md:hidden p-2 rounded-lg bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:text-brand-600 dark:hover:text-brand-400 transition-colors duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
-              aria-label="Toggle menu"
-            >
-              {isMenuOpen ? (
-                <X className="w-6 h-6" />
-              ) : (
-                <Menu className="w-6 h-6" />
-              )}
-            </motion.button>
-          </div>
-        </div>
-      </nav>
-      {/* Mobile Navigation */}
-      <AnimatePresence>
-        {isMenuOpen && (
-          <>
-            {/* Overlay */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 md:hidden"
-              onClick={() => setIsMenuOpen(false)}
-            />
-            
-            {/* Menu Panel */}
-            <motion.div
-              ref={mobileMenuRef}
-              variants={mobileMenuVariants}
-              initial="hidden"
-              animate="visible"
-              exit="hidden"
-              className="fixed top-0 right-0 bottom-0 w-80 bg-white dark:bg-neutral-950 shadow-xl z-50 md:hidden"
-            >
-              <div className="p-6 h-full flex flex-col">
-                {/* Close button */}
-                <div className="flex justify-end mb-8">
-                  <button
-                    onClick={() => setIsMenuOpen(false)}
-                    className="p-2 rounded-lg bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:text-brand-600 dark:hover:text-brand-400 transition-colors duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
-                    aria-label="Close menu"
+            {/* Desktop Navigation */}
+            <div className="hidden md:block">
+              <ul className="ml-10 flex items-baseline space-x-8" role="menubar">
+                {navigationItems.map((item, index) => (
+                  <motion.li
+                    key={item.name}
+                    role="none"
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: 0.1 * index }}
                   >
-                    <X className="w-6 h-6" />
-                  </button>
-                </div>
-                
-                {/* Navigation items */}
-                <nav className="flex-1 space-y-6">
-                  {navigationItems.map((item, index) => (
-                    <motion.a
-                      key={item.name}
+                    <a
                       href={item.href}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        handleNavClick(item.href);
-                      }}
-                      initial={{ opacity: 0, y: -15 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.4, delay: 0.1 * index, ease: [0.4, 0, 0.2, 1] }}
-                      className={`block text-xl font-medium nav-link ${activeSection === item.href.substring(1) ? 'active' : ''}`}
+                      onClick={(e) => handleNavClick(item.href, e)}
+                      onKeyDown={(e) => handleKeyDown(e, item.href)}
+                      className={`nav-link focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-neutral-950 focus-visible:outline-none px-2 py-1 rounded ${
+                        activeSection === item.href.substring(1) 
+                          ? 'text-brand-600 dark:text-brand-400 font-semibold' 
+                          : ''
+                      }`}
+                      role="menuitem"
+                      aria-current={activeSection === item.href.substring(1) ? 'page' : undefined}
                     >
                       {item.name}
-                    </motion.a>
-                  ))}
-                </nav>
-                
-                {/* Additional info at the bottom */}
-                <div className="pt-8 mt-auto border-t border-neutral-200 dark:border-neutral-800">
-                  <div className="flex items-center justify-between text-sm text-neutral-500 dark:text-neutral-400">
-                    <span>Available for projects</span>
-                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                    </a>
+                  </motion.li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Actions */}
+            <div className="flex items-center space-x-4">
+              {/* Dark Mode Toggle */}
+              <motion.button
+                onClick={toggleDarkMode}
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+                className="p-2 rounded-lg bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:text-brand-600 dark:hover:text-brand-400 transition-colors duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-neutral-950"
+                aria-label={`Switch to ${darkMode ? 'light' : 'dark'} mode`}
+                aria-pressed={darkMode}
+              >
+                {darkMode ? (
+                  <Sun className="w-5 h-5" aria-hidden="true" />
+                ) : (
+                  <Moon className="w-5 h-5" aria-hidden="true" />
+                )}
+              </motion.button>
+
+              {/* Mobile menu button */}
+              <motion.button
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+                className="md:hidden p-2 rounded-lg bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:text-brand-600 dark:hover:text-brand-400 transition-colors duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
+                aria-label={`${isMenuOpen ? 'Close' : 'Open'} navigation menu`}
+                aria-expanded={isMenuOpen}
+                aria-controls="mobile-menu"
+                aria-haspopup="menu"
+              >
+                {isMenuOpen ? (
+                  <X className="w-6 h-6" aria-hidden="true" />
+                ) : (
+                  <Menu className="w-6 h-6" aria-hidden="true" />
+                )}
+              </motion.button>
+            </div>
+          </div>
+        </nav>
+
+        {/* Mobile Navigation */}
+        <AnimatePresence>
+          {isMenuOpen && (
+            <>
+              {/* Overlay */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
+                className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 md:hidden"
+                onClick={() => setIsMenuOpen(false)}
+                aria-hidden="true"
+              />
+              
+              {/* Menu Panel */}
+              <motion.div
+                id="mobile-menu"
+                ref={mobileMenuRef}
+                variants={mobileMenuVariants}
+                initial="hidden"
+                animate="visible"
+                exit="hidden"
+                className="fixed top-0 right-0 bottom-0 w-80 bg-white dark:bg-neutral-950 shadow-2xl z-50 md:hidden"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="mobile-menu-title"
+              >
+                <div className="p-6 h-full flex flex-col">
+                  {/* Header */}
+                  <div className="flex justify-between items-center mb-8">
+                    <h2 id="mobile-menu-title" className="text-xl font-bold text-neutral-900 dark:text-neutral-100">
+                      Navigation
+                    </h2>
+                    <button
+                      onClick={() => setIsMenuOpen(false)}
+                      className="p-2 rounded-lg bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:text-brand-600 dark:hover:text-brand-400 transition-colors duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
+                      aria-label="Close navigation menu"
+                    >
+                      <X className="w-6 h-6" aria-hidden="true" />
+                    </button>
+                  </div>
+                  
+                  {/* Navigation items */}
+                  <nav className="flex-1 space-y-2" role="menu">
+                    {navigationItems.map((item, index) => (
+                      <motion.a
+                        key={item.name}
+                        href={item.href}
+                        onClick={(e) => handleNavClick(item.href, e)}
+                        onKeyDown={(e) => handleKeyDown(e, item.href)}
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.4, delay: 0.1 * index, ease: [0.4, 0, 0.2, 1] }}
+                        className={`block text-lg font-medium py-3 px-4 rounded-lg transition-colors duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 ${
+                          activeSection === item.href.substring(1) 
+                            ? 'text-brand-600 dark:text-brand-400 bg-brand-50 dark:bg-brand-900/20' 
+                            : 'text-neutral-700 dark:text-neutral-300 hover:text-brand-600 dark:hover:text-brand-400 hover:bg-neutral-100 dark:hover:bg-neutral-800'
+                        }`}
+                        role="menuitem"
+                        aria-current={activeSection === item.href.substring(1) ? 'page' : undefined}
+                      >
+                        {item.name}
+                      </motion.a>
+                    ))}
+                  </nav>
+                  
+                  {/* Footer info */}
+                  <div className="pt-8 mt-auto border-t border-neutral-200 dark:border-neutral-800">
+                    <div className="flex items-center justify-between text-sm text-neutral-500 dark:text-neutral-400">
+                      <span>Available for projects</span>
+                      <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" aria-label="Available status indicator"></div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
-    </motion.header>
+              </motion.div>
+            </>
+          )}
+        </AnimatePresence>
+      </motion.header>
+    </>
   );
 };
 

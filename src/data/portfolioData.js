@@ -8,10 +8,10 @@ export const personalInfo = {
   availability: "Available for new projects",
   social: {
     github: "https://github.com/Josue-Ovalle",
-    linkedin: "https://www.linkedin.com/in/josu%C3%A9-ovalle-07393437a/",
+    linkedin: "https://www.linkedin.com/in/josué-ovalle-07393437a/",
     twitter: "https://x.com/JosueOvalle_",
-    dribbble: "https://dribbble.com/josueovalle",
-    behance: "https://behance.net/josueovalle"
+    dribbble: "https://dribbble.com/josue-ovalle", 
+    behance: "https://www.behance.net/josuovalle" 
   }
 };
 
@@ -106,7 +106,10 @@ export const services = [
   }
 ];
 
-export const projects = [
+// TO DO: Replace these with REAL projects, when I've had finshed those
+  // "Coming soon" section will be here as a placeholder
+
+/* export const projects = [
   {
     id: "ecommerce-platform",
     title: "Premium E-commerce Platform",
@@ -377,9 +380,11 @@ export const projects = [
       company: "Pixel Perfect Studio"
     }
   }
-];
+]; */
 
-export const testimonials = [
+// TO DO: add real testimonials when I actually got ones haha
+
+/* export const testimonials = [
   {
     id: 1,
     name: "Maria Rodriguez",
@@ -452,36 +457,32 @@ export const testimonials = [
     metrics: "150% increase in leads",
     featured: false
   }
-];
+]; */
 
 export const timeline = [
   {
     year: "2024",
-    title: "Senior Frontend Developer",
-    description: "Specializing in React, Next.js, and modern web technologies. Building complex applications for SaaS companies and e-commerce businesses.",
-    highlights: ["50+ projects completed", "Advanced TypeScript mastery", "Performance optimization expert"]
+    title: "Frontend Developer",
+    description: "Focusing on React, Next.js, and modern web technologies. Building projects and expanding my skill set.",
+    highlights: ["Learning React ecosystem", "Building personal projects", "Developing portfolio"]
   },
   {
     year: "2023",
-    title: "Full-Stack Development",
-    description: "Expanded into backend development with Node.js, databases, and API integration. Started working with larger clients and complex projects.",
-    highlights: ["Backend integration", "Database design", "API development"]
+    title: "Web Development Learning",
+    description: "Intensive study of web development fundamentals and modern JavaScript frameworks.",
+    highlights: ["JavaScript mastery", "React learning", "First web projects"]
   },
   {
     year: "2022",
-    title: "Frontend Specialization",
-    description: "Focused on React, Tailwind CSS, and modern frontend development practices. Built my first commercial projects and established client relationships.",
-    highlights: ["React mastery", "First commercial projects", "Client relationship building"]
-  },
-  {
-    year: "2021",
-    title: "Web Development Journey Begins",
-    description: "Started learning HTML, CSS, and JavaScript through online courses and personal projects. Built foundation in web development fundamentals.",
-    highlights: ["Web fundamentals", "First personal projects", "Continuous learning mindset"]
+    title: "Programming Foundations",
+    description: "Started learning programming and web development fundamentals through online courses and practice.",
+    highlights: ["HTML, CSS, JavaScript", "Programming concepts", "Development environment setup"]
   }
 ];
 
-export const certifications = [
+  // TO DO: Add certifications you have
+
+/* export const certifications = [
   {
     name: "React Developer Certification",
     issuer: "Meta",
@@ -503,4 +504,4 @@ export const certifications = [
     credentialId: "TS-ADV-2023-003",
     skills: ["TypeScript", "Advanced Types", "Generics", "Utility Types"]
   }
-];
+]; */

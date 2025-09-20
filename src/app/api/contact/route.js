@@ -11,9 +11,81 @@ setInterval(() => {
       rateLimitMap.delete(ip);
     }
   }
-}, 3600000); 
+}, 3600000);
 
-// Rate limiting middleware
+// Enhanced input validation
+function validateInput(data) {
+  const errors = {};
+
+  // Name validation
+  if (!data.name || typeof data.name !== 'string') {
+    errors.name = 'Name is required';
+  } else if (data.name.trim().length < 2) {
+    errors.name = 'Name must be at least 2 characters';
+  } else if (data.name.trim().length > 50) {
+    errors.name = 'Name must not exceed 50 characters';
+  } else if (!/^[a-zA-ZÀ-ÿ\s'-]+$/.test(data.name.trim())) {
+    errors.name = 'Name contains invalid characters';
+  }
+
+  // Email validation
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!data.email || typeof data.email !== 'string') {
+    errors.email = 'Email is required';
+  } else if (!emailRegex.test(data.email.trim())) {
+    errors.email = 'Invalid email address';
+  } else if (data.email.length > 254) {
+    errors.email = 'Email address too long';
+  }
+
+  // Subject validation
+  if (!data.subject || typeof data.subject !== 'string') {
+    errors.subject = 'Subject is required';
+  } else if (data.subject.trim().length < 5) {
+    errors.subject = 'Subject must be at least 5 characters';
+  } else if (data.subject.trim().length > 100) {
+    errors.subject = 'Subject must not exceed 100 characters';
+  }
+
+  // Message validation
+  if (!data.message || typeof data.message !== 'string') {
+    errors.message = 'Message is required';
+  } else if (data.message.trim().length < 10) {
+    errors.message = 'Message must be at least 10 characters';
+  } else if (data.message.trim().length > 2000) {
+    errors.message = 'Message must not exceed 2000 characters';
+  }
+
+  return {
+    isValid: Object.keys(errors).length === 0,
+    errors
+  };
+}
+
+// Enhanced sanitization
+function sanitizeInput(value) {
+  if (typeof value !== 'string') return '';
+  
+  return value
+    .trim()
+    // Remove HTML tags
+    .replace(/<[^>]*>/g, '')
+    // Remove potentially dangerous characters
+    .replace(/[<>'"&]/g, (match) => {
+      const entities = {
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#x27;',
+        '&': '&amp;'
+      };
+      return entities[match] || match;
+    })
+    // Remove excessive whitespace
+    .replace(/\s+/g, ' ');
+}
+
+// Rate limiting with per-IP tracking
 function checkRateLimit(ip) {
   const now = Date.now();
   const limit = 5; // Max 5 requests per hour
@@ -21,7 +93,7 @@ function checkRateLimit(ip) {
 
   if (!rateLimitMap.has(ip)) {
     rateLimitMap.set(ip, { count: 1, lastRequest: now });
-    return true;
+    return { allowed: true, remaining: limit - 1 };
   }
 
   const data = rateLimitMap.get(ip);
@@ -30,130 +102,191 @@ function checkRateLimit(ip) {
     // Reset counter if window has passed
     data.count = 1;
     data.lastRequest = now;
-    return true;
+    return { allowed: true, remaining: limit - 1 };
   }
   
   if (data.count < limit) {
     data.count++;
-    return true;
+    data.lastRequest = now;
+    return { allowed: true, remaining: limit - data.count };
   }
   
-  return false;
+  return { allowed: false, remaining: 0, retryAfter: windowMs - (now - data.lastRequest) };
 }
 
-// Initialize Resend with API key from environment variables
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Initialize Resend with proper error handling
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
 export async function POST(request) {
   try {
-    const ip = request.headers.get('x-forwarded-for') || 'unknown';
-    const body = await request.json();
-    const { name, email, subject, message } = body;
-
-    if (!checkRateLimit(ip)) {
+    // Get client IP
+    const ip = request.headers.get('x-forwarded-for')?.split(',')[0] || 
+              request.headers.get('x-real-ip') || 
+              'unknown';
+    
+    // Check rate limit
+    const rateLimit = checkRateLimit(ip);
+    if (!rateLimit.allowed) {
       return NextResponse.json(
-        { error: 'Too many requests. Please try again later.' },
-        { status: 429 }
+        { 
+          error: 'Too many requests. Please try again later.',
+          retryAfter: Math.ceil(rateLimit.retryAfter / 1000) // seconds
+        },
+        { 
+          status: 429,
+          headers: {
+            'Retry-After': Math.ceil(rateLimit.retryAfter / 1000).toString()
+          }
+        }
       );
     }
 
-    // Validation
-    if (!name || !email || !subject || !message) {
+    // Parse and validate request body
+    let body;
+    try {
+      body = await request.json();
+    } catch (error) {
       return NextResponse.json(
-        { error: 'All fields are required' },
+        { error: 'Invalid JSON in request body' },
         { status: 400 }
       );
     }
 
-    // Basic email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
+    // Validate input
+    const validation = validateInput(body);
+    if (!validation.isValid) {
       return NextResponse.json(
-        { error: 'Invalid email address' },
+        { 
+          error: 'Validation failed', 
+          details: validation.errors 
+        },
         { status: 400 }
       );
     }
 
-    // Sanitize inputs (basic XSS protection)
+    // Sanitize inputs
     const sanitizedData = {
-      name: name.trim().replace(/<[^>]*>/g, ''),
-      email: email.trim().toLowerCase(),
-      subject: subject.trim().replace(/<[^>]*>/g, ''),
-      message: message.trim().replace(/<[^>]*>/g, '')
+      name: sanitizeInput(body.name),
+      email: sanitizeInput(body.email).toLowerCase(),
+      subject: sanitizeInput(body.subject),
+      message: sanitizeInput(body.message),
+      budget: body.budget ? sanitizeInput(body.budget) : '',
+      timeline: body.timeline ? sanitizeInput(body.timeline) : ''
     };
 
-    // Send email using Resend
+    // Check if Resend is configured
+    if (!resend) {
+      console.error('Resend API key not configured');
+      return NextResponse.json(
+        { error: 'Email service not configured. Please try again later.' },
+        { status: 503 }
+      );
+    }
+
+    // Prepare email data
     const emailData = {
-      from: process.env.FROM_EMAIL || 'hello@alexchen.dev',
-      to: process.env.TO_EMAIL || 'hello@alexchen.dev',
-      subject: `New Contact Form Submission: ${sanitizedData.subject}`,
+      from: process.env.FROM_EMAIL || 'noreply@josueovalle.com',
+      to: process.env.TO_EMAIL || 'josueovalle064@gmail.com',
+      subject: `Portfolio Contact: ${sanitizedData.subject}`,
       html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #0ea5e9; border-bottom: 2px solid #0ea5e9; padding-bottom: 10px;">
-            New Contact Form Submission
-          </h2>
-          
-          <div style="background-color: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
-            <h3 style="color: #334155; margin-top: 0;">Contact Details</h3>
-            <p><strong>Name:</strong> ${sanitizedData.name}</p>
-            <p><strong>Email:</strong> ${sanitizedData.email}</p>
-            <p><strong>Subject:</strong> ${sanitizedData.subject}</p>
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+          <div style="border-bottom: 3px solid #0ea5e9; padding-bottom: 20px; margin-bottom: 30px;">
+            <h1 style="color: #0ea5e9; margin: 0; font-size: 24px;">New Portfolio Contact</h1>
+            <p style="color: #666; margin: 5px 0 0 0; font-size: 14px;">
+              Received: ${new Date().toLocaleString('es-GT', { timeZone: 'America/Guatemala' })}
+            </p>
           </div>
           
-          <div style="background-color: #ffffff; padding: 20px; border-left: 4px solid #0ea5e9; margin: 20px 0;">
-            <h3 style="color: #334155; margin-top: 0;">Message</h3>
-            <p style="line-height: 1.6; color: #475569;">${sanitizedData.message.replace(/\n/g, '<br>')}</p>
+          <div style="background: #f8fafc; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+            <h2 style="color: #334155; margin: 0 0 15px 0; font-size: 18px;">Contact Information</h2>
+            <table style="width: 100%; border-collapse: collapse;">
+              <tr>
+                <td style="padding: 8px 0; border-bottom: 1px solid #e2e8f0; font-weight: bold; color: #475569; width: 100px;">Name:</td>
+                <td style="padding: 8px 0; border-bottom: 1px solid #e2e8f0; color: #334155;">${sanitizedData.name}</td>
+              </tr>
+              <tr>
+                <td style="padding: 8px 0; border-bottom: 1px solid #e2e8f0; font-weight: bold; color: #475569;">Email:</td>
+                <td style="padding: 8px 0; border-bottom: 1px solid #e2e8f0; color: #334155;">${sanitizedData.email}</td>
+              </tr>
+              <tr>
+                <td style="padding: 8px 0; border-bottom: 1px solid #e2e8f0; font-weight: bold; color: #475569;">Subject:</td>
+                <td style="padding: 8px 0; border-bottom: 1px solid #e2e8f0; color: #334155;">${sanitizedData.subject}</td>
+              </tr>
+              ${sanitizedData.budget ? `
+              <tr>
+                <td style="padding: 8px 0; border-bottom: 1px solid #e2e8f0; font-weight: bold; color: #475569;">Budget:</td>
+                <td style="padding: 8px 0; border-bottom: 1px solid #e2e8f0; color: #334155;">${sanitizedData.budget}</td>
+              </tr>
+              ` : ''}
+              ${sanitizedData.timeline ? `
+              <tr>
+                <td style="padding: 8px 0; font-weight: bold; color: #475569;">Timeline:</td>
+                <td style="padding: 8px 0; color: #334155;">${sanitizedData.timeline}</td>
+              </tr>
+              ` : ''}
+            </table>
           </div>
           
-          <div style="margin-top: 30px; padding: 15px; background-color: #f1f5f9; border-radius: 6px;">
-            <p style="margin: 0; color: #64748b; font-size: 14px;">
-              This email was sent from your portfolio contact form at ${new Date().toLocaleString()}.
-              Reply directly to this email to respond to ${sanitizedData.name}.
+          <div style="background: white; padding: 20px; border-left: 4px solid #0ea5e9; border-radius: 0 8px 8px 0; margin-bottom: 30px;">
+            <h2 style="color: #334155; margin: 0 0 15px 0; font-size: 18px;">Message</h2>
+            <p style="line-height: 1.6; color: #475569; white-space: pre-wrap; margin: 0;">${sanitizedData.message}</p>
+          </div>
+          
+          <div style="background: #f1f5f9; padding: 15px; border-radius: 6px; text-align: center;">
+            <p style="margin: 0; color: #64748b; font-size: 12px;">
+              This email was sent from your portfolio contact form.<br>
+              Reply directly to respond to ${sanitizedData.name} (${sanitizedData.email}).
             </p>
           </div>
         </div>
       `,
-      // Set reply-to as the sender's email
       replyTo: sanitizedData.email,
     };
 
+    // Send email
     await resend.emails.send(emailData);
 
-    // Send auto-reply to the user
+    // Send auto-reply to user
     const autoReplyData = {
-      from: process.env.FROM_EMAIL || 'hello@alexchen.dev',
+      from: process.env.FROM_EMAIL || 'noreply@josueovalle.com',
       to: sanitizedData.email,
       subject: 'Thank you for your message - Josué Ovalle',
       html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #0ea5e9; border-bottom: 2px solid #0ea5e9; padding-bottom: 10px;">
-            Thank You for Your Message!
-          </h2>
-          
-          <p>Hi ${sanitizedData.name},</p>
-          
-          <p>Thank you for reaching out! I've received your message about "<strong>${sanitizedData.subject}</strong>" and I'll get back to you as soon as possible, usually within 24 hours.</p>
-          
-          <div style="background-color: #f0f9ff; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #0ea5e9;">
-            <h3 style="color: #0c4a6e; margin-top: 0;">Your Message Summary</h3>
-            <p><strong>Subject:</strong> ${sanitizedData.subject}</p>
-            <p><strong>Message:</strong></p>
-            <p style="font-style: italic; color: #475569;">${sanitizedData.message}</p>
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+          <div style="text-align: center; border-bottom: 3px solid #0ea5e9; padding-bottom: 20px; margin-bottom: 30px;">
+            <h1 style="color: #0ea5e9; margin: 0; font-size: 28px;">Thank You!</h1>
+            <p style="color: #666; margin: 10px 0 0 0;">Your message has been received</p>
           </div>
           
-          <p>In the meantime, feel free to:</p>
-          <ul>
-            <li>Check out my <a href="https://alexchen.dev/#portfolio" style="color: #0ea5e9;">recent projects</a></li>
-            <li>Connect with me on <a href="https://linkedin.com/in/alexchen" style="color: #0ea5e9;">LinkedIn</a></li>
-            <li>Follow me on <a href="https://github.com/alexchen" style="color: #0ea5e9;">GitHub</a></li>
-          </ul>
+          <p style="font-size: 16px; line-height: 1.6; color: #334155;">Hi ${sanitizedData.name},</p>
           
-          <p>Looking forward to discussing your project!</p>
+          <p style="font-size: 16px; line-height: 1.6; color: #334155;">
+            Thank you for reaching out! I've received your message about "<strong>${sanitizedData.subject}</strong>" 
+            and I'll get back to you as soon as possible, usually within 24 hours.
+          </p>
           
-          <div style="margin-top: 30px; padding: 20px; background-color: #f8fafc; border-radius: 8px;">
-            <p style="margin: 0; color: #0ea5e9; font-weight: bold;">Alex Chen</p>
-            <p style="margin: 5px 0 0 0; color: #64748b;">AI-Enhanced Web Developer</p>
-            <p style="margin: 5px 0 0 0; color: #64748b;">hello@alexchen.dev | San Francisco, CA</p>
+          <div style="background: #f0f9ff; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #0ea5e9;">
+            <h3 style="color: #0c4a6e; margin: 0 0 10px 0;">Your Message Summary</h3>
+            <p style="margin: 5px 0; color: #334155;"><strong>Subject:</strong> ${sanitizedData.subject}</p>
+            ${sanitizedData.budget ? `<p style="margin: 5px 0; color: #334155;"><strong>Budget:</strong> ${sanitizedData.budget}</p>` : ''}
+            ${sanitizedData.timeline ? `<p style="margin: 5px 0; color: #334155;"><strong>Timeline:</strong> ${sanitizedData.timeline}</p>` : ''}
+            <p style="margin: 10px 0 0 0; color: #334155;"><strong>Message:</strong></p>
+            <p style="font-style: italic; color: #475569; margin: 5px 0 0 0; white-space: pre-wrap;">${sanitizedData.message}</p>
+          </div>
+          
+          <p style="font-size: 16px; line-height: 1.6; color: #334155;">
+            In the meantime, feel free to check out my recent projects on my 
+            <a href="https://josueovalle.com" style="color: #0ea5e9; text-decoration: none;">portfolio</a>.
+          </p>
+          
+          <p style="font-size: 16px; line-height: 1.6; color: #334155;">
+            Looking forward to discussing your project!
+          </p>
+          
+          <div style="margin-top: 30px; padding: 20px; background: #f8fafc; border-radius: 8px; text-align: center;">
+            <p style="margin: 0; color: #0ea5e9; font-weight: bold; font-size: 18px;">Josué Ovalle</p>
+            <p style="margin: 5px 0 0 0; color: #64748b;">Frontend Developer</p>
+            <p style="margin: 5px 0 0 0; color: #64748b;">josueovalle064@gmail.com | Guatemala City, GT</p>
           </div>
         </div>
       `,
@@ -163,16 +296,22 @@ export async function POST(request) {
 
     return NextResponse.json(
       { 
+        success: true,
         message: 'Message sent successfully!',
         timestamp: new Date().toISOString()
       },
-      { status: 200 }
+      { 
+        status: 200,
+        headers: {
+          'X-RateLimit-Remaining': rateLimit.remaining.toString()
+        }
+      }
     );
 
   } catch (error) {
     console.error('Contact form error:', error);
     
-    // Log error details for debugging (remove in production)
+    // Log detailed error info for debugging
     if (process.env.NODE_ENV === 'development') {
       console.error('Error details:', {
         message: error.message,
@@ -181,9 +320,10 @@ export async function POST(request) {
       });
     }
 
+    // Don't expose internal error details to client
     return NextResponse.json(
       { 
-        error: 'Failed to send message. Please try again later.',
+        error: 'An unexpected error occurred. Please try again later.',
         timestamp: new Date().toISOString()
       },
       { status: 500 }
@@ -191,21 +331,29 @@ export async function POST(request) {
   }
 }
 
-// Handle other HTTP methods
-export async function GET() {
-  return NextResponse.json(
-    { message: 'Contact API endpoint is working' },
-    { status: 200 }
-  );
-}
-
+// Handle OPTIONS for CORS preflight
 export async function OPTIONS() {
   return new NextResponse(null, {
     status: 200,
     headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
+      'Access-Control-Allow-Origin': process.env.NODE_ENV === 'production' 
+        ? 'https://josueovalle.com' 
+        : 'http://localhost:3000',
+      'Access-Control-Allow-Methods': 'POST, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type',
+      'Access-Control-Max-Age': '86400',
     },
   });
+}
+
+// Handle GET for API health check
+export async function GET() {
+  return NextResponse.json(
+    { 
+      status: 'ok',
+      message: 'Contact API endpoint is working',
+      rateLimit: 'Maximum 5 requests per hour per IP'
+    },
+    { status: 200 }
+  );
 }

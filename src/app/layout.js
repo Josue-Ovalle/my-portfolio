@@ -24,25 +24,23 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata = {
   metadataBase: new URL('https://josueovalle.com'),
   title: {
-    default: 'Josué Ovalle - Frontend Developer & Modern Web Development Expert',
+    default: 'Josué Ovalle - Frontend Developer & Web Developer from Guatemala',
     template: '%s | Josué Ovalle - Frontend Developer'
   },
-  description: 'Professional frontend developer specializing in React, Next.js, and TypeScript. Creating modern, performant websites that deliver measurable business results. 98% client satisfaction, 50+ projects delivered.',
+  description: 'Frontend developer specializing in React, Next.js, and TypeScript. Based in Guatemala City, creating modern web applications with focus on performance and user experience.',
   keywords: [
     'frontend developer',
     'React developer', 
-    'Next.js expert',
-    'TypeScript specialist',
-    'web development Guatemala',
+    'Next.js developer',
+    'TypeScript developer',
+    'web developer Guatemala',
+    'Guatemala developer',
     'modern web applications',
-    'performance optimization',
-    'UI/UX design',
-    'responsive design',
     'JavaScript developer',
     'Tailwind CSS',
-    'web performance',
-    'conversion optimization',
-    'business results'
+    'web development services',
+    'Josué Ovalle',
+    'Guatemala City developer'
   ].join(', '),
   authors: [{ 
     name: 'Josué Ovalle',
@@ -51,7 +49,7 @@ export const metadata = {
   creator: 'Josué Ovalle',
   publisher: 'Josué Ovalle',
   category: 'Technology',
-  classification: 'Business',
+  classification: 'Personal Portfolio',
   robots: {
     index: true,
     follow: true,
@@ -69,23 +67,16 @@ export const metadata = {
     type: 'website',
     locale: 'en_US',
     alternateLocale: ['es_GT'],
-    url: 'https://josueovalle.com',
-    siteName: 'Josué Ovalle - Professional Portfolio',
-    title: 'Josué Ovalle - Frontend Developer & Modern Web Development Expert',
-    description: 'Professional frontend developer specializing in React, Next.js, and TypeScript. Creating modern, performant websites that deliver measurable business results. 98% client satisfaction, 50+ projects delivered.',
+    url: 'https://josueovalle.com', 
+    siteName: 'Josué Ovalle Portfolio',
+    title: 'Josué Ovalle - Frontend Developer from Guatemala',
+    description: 'Frontend developer specializing in React, Next.js, and TypeScript. Creating modern, performant web applications in Guatemala City.',
     images: [
       {
         url: '/my-photo.jpg',
         width: 1200,
         height: 630,
-        alt: 'Josué Ovalle - Professional Frontend Developer specializing in React and Next.js',
-        type: 'image/jpeg',
-      },
-      {
-        url: '/my-photo.jpg',
-        width: 800,
-        height: 600,
-        alt: 'Josué Ovalle - Web Developer Portfolio',
+        alt: 'Josué Ovalle - Frontend Developer specializing in React and Next.js',
         type: 'image/jpeg',
       }
     ],
@@ -96,14 +87,14 @@ export const metadata = {
     card: 'summary_large_image',
     site: '@JosueOvalle_',
     creator: '@JosueOvalle_',
-    title: 'Josué Ovalle - Frontend Developer & Modern Web Development Expert',
-    description: 'Professional frontend developer specializing in React, Next.js, and TypeScript. Creating modern, performant websites that deliver measurable business results.',
+    title: 'Josué Ovalle - Frontend Developer from Guatemala',
+    description: 'Frontend developer specializing in React, Next.js, and TypeScript. Creating modern web applications.',
     images: [{
       url: '/my-photo.jpg',
-      alt: 'Josué Ovalle - Professional Frontend Developer',
+      alt: 'Josué Ovalle - Frontend Developer',
     }],
   },
-  verification: {
+  /* verification: {
     google: 'placeholder', // Add actual verification code later
     yandex: 'placeholder',
     yahoo: 'placeholder',
@@ -123,6 +114,15 @@ export const metadata = {
     'msvalidate.01': 'placeholder',
     'facebook-domain-verification': 'placeholder'
   }
+} */ 
+    // Removed verification, until I got ones.
+  alternates: {
+    canonical: 'https://josueovalle.com', 
+    languages: {
+      'en-US': 'https://josueovalle.com',
+      'es-GT': 'https://josueovalle.com/es' 
+    }
+  },
 }
 
 // Viewport exportado separado
@@ -142,18 +142,19 @@ export default function RootLayout({ children }) {
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
         <link rel="manifest" href="/site.webmanifest" />
         <meta name="theme-color" content="#0ea5e9" />
+        <meta name="format-detection" content="telephone=no" />
       </head>
       <body className="font-sans bg-white dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 transition-colors duration-300">
-          <StructuredData />
-          <ThemeProvider>
-            <ErrorBoundary>
-              <CustomCursor />
-              <ScrollProgress />
-              <div id="root">{children}</div>
-              <PerformanceMonitor />
-              <Analytics />
-            </ErrorBoundary>
-          </ThemeProvider>
+        <StructuredData />
+        <ThemeProvider>
+          <ErrorBoundary>
+            <CustomCursor />
+            <ScrollProgress />
+            {children}
+            <PerformanceMonitor />
+            <Analytics />
+          </ErrorBoundary>
+        </ThemeProvider>
       </body>
     </html>
   )

@@ -1,6 +1,7 @@
 'use client';
 
-import { personalInfo, projects, testimonials, services } from '@/data/portfolioData';
+import { personalInfo, projects, services } from '@/data/portfolioData';
+import { testimonials } from '@/data/testimonials';
 
 const StructuredData = () => {
   // Person Schema
@@ -119,7 +120,7 @@ const StructuredData = () => {
     "aggregateRating": {
       "@type": "AggregateRating",
       "ratingValue": "5.0",
-      "reviewCount": testimonials.length,
+      "reviewCount": testimonials ? testimonials.length : 0,
       "bestRating": "5",
       "worstRating": "1"
     },

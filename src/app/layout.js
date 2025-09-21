@@ -1,5 +1,5 @@
+import './globals.css';
 import { Inter, JetBrains_Mono } from 'next/font/google'
-import './globals.css'
 import { ThemeProvider } from '@/providers/ThemeProvider';
 import PerformanceMonitor from '@/components/PerformanceMonitor';
 import ErrorBoundary from '@/components/ErrorBoundary';

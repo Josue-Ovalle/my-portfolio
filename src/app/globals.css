@@ -1,5 +1,5 @@
 @tailwind base;
-@tailwind components; 
+@tailwind components;
 @tailwind utilities;
 
 /* Import premium fonts */
@@ -63,7 +63,7 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-gray-100 dark:bg-gray-900;
+  @apply bg-neutral-100 dark:neutral-900;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -162,7 +162,7 @@ body {
 
 .btn-ghost {
   @apply relative overflow-hidden;
-  @apply bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800;
+  @apply bg-transparent hover:bg-neutral-100 dark:hover:neutral-800;
   @apply text-gray-700 dark:text-gray-300 hover:text-brand-600 dark:hover:text-brand-400;
   @apply font-medium px-6 py-3 rounded-lg;
   @apply transition-all duration-300 ease-out;
@@ -171,7 +171,7 @@ body {
 
 /* Enhanced card styles */
 .card {
-  @apply bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800;
+  @apply bg-white dark:neutral-900 rounded-2xl border border-gray-200 dark:border-gray-800;
   @apply shadow-lg hover:shadow-xl transition-all duration-400;
   @apply backdrop-blur-sm;
 }
@@ -233,7 +233,7 @@ body {
 /* Premium form styles */
 .form-input {
   @apply w-full px-4 py-4 rounded-xl border-2 border-gray-200 dark:border-gray-700;
-  @apply bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100;
+  @apply bg-white dark:neutral-900 text-gray-900 dark:text-gray-100;
   @apply placeholder-gray-500 dark:placeholder-gray-400;
   @apply focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500;
   @apply transition-all duration-300;
@@ -255,7 +255,7 @@ body {
 
 /* Premium project styles */
 .project-card {
-  @apply relative overflow-hidden rounded-2xl bg-white dark:bg-gray-900;
+  @apply relative overflow-hidden rounded-2xl bg-white dark:neutral-900;
   @apply shadow-lg hover:shadow-2xl transition-all duration-500;
   @apply border border-gray-200 dark:border-gray-800;
 }
@@ -281,7 +281,7 @@ body {
 
 /* Enhanced testimonial styles */
 .testimonial-card {
-  @apply bg-white dark:bg-gray-900 rounded-2xl p-8;
+  @apply bg-white dark:neutral-900 rounded-2xl p-8;
   @apply shadow-lg hover:shadow-xl transition-all duration-400;
   @apply border border-gray-100 dark:border-gray-800;
   @apply relative overflow-hidden;
@@ -410,7 +410,7 @@ body {
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  @apply bg-gray-100 dark:bg-gray-800 rounded-full;
+  @apply bg-neutral-100 dark:bg-neutral-800 rounded-full;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {

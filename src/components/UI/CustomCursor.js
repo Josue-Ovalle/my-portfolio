@@ -22,8 +22,16 @@ const CustomCursor = () => {
     };
 
     const handleMouseEnter = (e) => {
-      const target = e.target.nodeType === 3 ? e.target.parentElement : e.target;
-      
+      let target = e.target;
+
+      // If it's a text node, fallback to parent
+      if (target && target.nodeType === 3) {
+        target = target.parentElement;
+      }
+
+      // Make sure target is a valid DOM element
+      if (!(target instanceof Element)) return;
+
       // Check for interactive elements
       if (target.matches('button, a, [role="button"], .cursor-pointer')) {
         setIsHovering(true);
@@ -36,13 +44,13 @@ const CustomCursor = () => {
           setCursorVariant('text');
         }
       }
-      
+
       // Check for project cards
       if (target.closest('.project-card, .card-interactive')) {
         setCursorVariant('project');
         setCursorText('View');
       }
-      
+
       // Check for magnetic elements
       if (target.matches('.magnetic')) {
         setCursorVariant('magnetic');

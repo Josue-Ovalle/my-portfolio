@@ -1,4 +1,10 @@
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useState } from 'react';
+
+declare global {
+  interface Window {
+    gtag: (...args: any[]) => void;
+  }
+}
 
 interface PerformanceMetrics {
   cls: number;
@@ -74,11 +80,13 @@ export const usePerformanceMonitoring = () => {
       const lcpObserver = new PerformanceObserver((list) => {
         const entries = list.getEntries();
         const lastEntry = entries[entries.length - 1];
-        reportMetric({
-          name: 'LCP',
-          value: lastEntry.startTime,
-          id: lastEntry.entryType,
-        });
+        if (lastEntry) {
+          reportMetric({
+            name: 'LCP',
+            value: lastEntry.startTime,
+            id: lastEntry.entryType,
+          });
+        }
       });
 
       try {

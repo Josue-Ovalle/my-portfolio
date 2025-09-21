@@ -1,8 +1,8 @@
 // Enhanced animation configurations for Framer Motion
 
 export const easing = {
-  spring: [0.175, 0.885, 0.32, 1.275],
-  smooth: [0.4, 0, 0.2, 1],
+  spring: "circOut",
+  smooth: "easeOut",
   bounce: [0.68, -0.55, 0.265, 1.55],
   easeOut: [0.4, 0, 0.2, 1],
   easeIn: [0.4, 0, 1, 1],
@@ -350,7 +350,7 @@ export const springPresets = {
   }
 };
 
-export default {
+const animations = {
   easing,
   duration,
   heroAnimations,
@@ -373,3 +373,5 @@ export default {
   progressiveLoad,
   springPresets
 };
+
+export default animations;

@@ -56,7 +56,8 @@ const Header = ({ darkMode, toggleDarkMode }) => {
     const element = document.querySelector(href);
     if (element) {
       const header = document.querySelector('header');
-      const headerHeight = header ? header.offsetHeight : 80;
+      const isMobile = window.innerWidth < 768;
+      const headerHeight = isMobile ? 64 : 80; // Mobile vs desktop header height
       
       const offsetTop = element.offsetTop - headerHeight;
       window.scrollTo({
@@ -124,6 +125,36 @@ const Header = ({ darkMode, toggleDarkMode }) => {
     };
   }, [isMenuOpen]);
 
+  useEffect(() => {
+  if (isMenuOpen) {
+    document.body.classList.add('menu-open');
+    // Prevent scrolling on the background
+    const scrollY = window.scrollY;
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.left = '0';
+    document.body.style.right = '0';
+  } else {
+    const scrollY = document.body.style.top;
+    document.body.classList.remove('menu-open');
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.left = '';
+    document.body.style.right = '';
+    if (scrollY) {
+      window.scrollTo(0, parseInt(scrollY || '0') * -1);
+    }
+  }
+
+  return () => {
+    document.body.classList.remove('menu-open');
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.left = '';
+    document.body.style.right = '';
+  };
+}, [isMenuOpen]);
+
   // Focus management for mobile menu
   useEffect(() => {
     if (isMenuOpen) {
@@ -175,6 +206,14 @@ const Header = ({ darkMode, toggleDarkMode }) => {
             ? 'bg-white/90 dark:bg-neutral-950/90 backdrop-blur-lg shadow-sm border-b border-neutral-200/50 dark:border-neutral-800/50' 
             : 'bg-transparent'
         }`}
+        style={{
+          // Ensure header is always at the top
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          zIndex: 50
+        }}
         role="banner"
       >
         <nav 
@@ -278,18 +317,28 @@ const Header = ({ darkMode, toggleDarkMode }) => {
         <AnimatePresence>
           {isMenuOpen && (
             <>
-              {/* Overlay */}
+              {/* Enhanced Overlay with proper viewport coverage */}
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.3 }}
-                className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 md:hidden"
+                className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[9998] md:hidden"
+                style={{
+                  position: 'fixed',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  width: '100vw',
+                  height: '100vh',
+                  minHeight: '100vh'
+                }}
                 onClick={() => setIsMenuOpen(false)}
                 aria-hidden="true"
               />
               
-              {/* Menu Panel */}
+              {/* Menu Panel with higher z-index */}
               <motion.div
                 id="mobile-menu"
                 ref={mobileMenuRef}
@@ -297,12 +346,18 @@ const Header = ({ darkMode, toggleDarkMode }) => {
                 initial="hidden"
                 animate="visible"
                 exit="hidden"
-                className="fixed top-0 right-0 bottom-0 w-80 bg-white dark:bg-neutral-950 shadow-2xl z-50 md:hidden"
+                className="fixed top-0 right-0 bottom-0 w-80 bg-white dark:bg-neutral-950 shadow-2xl z-[9999] md:hidden"
+                style={{
+                  maxWidth: '320px',
+                  minHeight: '100vh',
+                  height: '100vh'
+                }}
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="mobile-menu-title"
               >
-                <div className="p-6 h-full flex flex-col">
+                <div className="p-6 h-full flex flex-col overflow-y-auto">
+                  {/* Rest of your menu content stays the same */}
                   {/* Header */}
                   <div className="flex justify-between items-center mb-8">
                     <h2 

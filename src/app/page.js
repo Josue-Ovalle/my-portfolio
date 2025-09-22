@@ -142,7 +142,7 @@ export default function Home() {
     <div className="min-h-screen bg-white dark:bg-neutral-950 transition-colors duration-300">
       <Header darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
       
-      <main id="main-content" role="main">
+      <main id="main-content" role="main" className="pt-16 md:pt-20">
         <Hero />
         <Skills />
         <About />

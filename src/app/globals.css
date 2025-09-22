@@ -45,7 +45,8 @@
 html {
   scroll-behavior: smooth;
   font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
-  font-variant-numeric: oldstyle-nums;
+  /* font-variant-numeric: oldstyle-nums; */
+  font-variant-numeric: lining-nums;
 }
 
 body {
@@ -169,6 +170,11 @@ body {
   @apply focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2;
 }
 
+.menu-open {
+  overflow: hidden;
+  height: 100vh;
+}
+
 /* Enhanced card styles */
 .card {
   @apply bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800;
@@ -215,6 +221,16 @@ body {
 
 .text-gradient-rainbow {
   @apply bg-gradient-to-r from-brand-600 via-purple-600 to-green-600 bg-clip-text text-transparent;
+}
+
+.heading-hero,
+.text-4xl,
+.text-3xl,
+.text-2xl,
+.text-xl,
+.text-lg,
+[class*="text-"]:has([class*="font-bold"]) {
+  font-variant-numeric: lining-nums;
 }
 
 /* Enhanced section spacing */
@@ -420,4 +436,43 @@ body {
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   @apply bg-brand-500 dark:bg-brand-500;
+}
+
+/* Ensure header doesn't cause layout shift on mobile */
+@media (max-width: 768px) {
+  header {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    z-index: 50 !important;
+  }
+  
+  /* Prevent content from jumping under header */
+  main {
+    padding-top: 4rem; /* 64px for mobile header height */
+  }
+  
+  /* Smooth scroll offset for mobile navigation */
+  html {
+    scroll-padding-top: 4rem;
+  }
+}
+
+@media (min-width: 769px) {
+  main {
+    padding-top: 5rem; /* 80px for desktop header height */
+  }
+  
+  html {
+    scroll-padding-top: 5rem;
+  }
+}
+
+/* Prevent any potential flickering on mobile */
+@media (max-width: 768px) {
+  body {
+    padding-top: 0 !important;
+  }
 }

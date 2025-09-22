@@ -1,7 +1,7 @@
 'use client';
 
 import { motion, useInView } from 'framer-motion';
-import { useRef, useState } from 'react';
+import { useRef, useState, memo } from 'react';
 import { Mail, Phone, MapPin, Send, CheckCircle, ArrowRight } from 'lucide-react';
 import { personalInfo } from '@/data/portfolioData';
 import { staggerContainer, staggerItem } from '@/utils/animations';
@@ -9,7 +9,7 @@ import { useAdvancedScrollAnimation, use3DTilt } from '@/hooks/useAdvancedScroll
 import AnimatedButton from '@/components/UI/AnimatedButton';
 import { useForm } from '@/hooks/useForm';
 
-const Contact = () => {
+const Contact = memo(() => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, threshold: 0.1 });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -458,6 +458,8 @@ const Contact = () => {
       </div>
     </section>
   );
-};
+});
+
+Contact.displayName = "Contact"
 
 export default Contact;

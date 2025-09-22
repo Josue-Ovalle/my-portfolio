@@ -48,14 +48,20 @@ class ErrorBoundary extends Component<Props, State> {
       this.props.onError(error, errorInfo);
     }
 
-    // In production, send to error reporting service
     if (process.env.NODE_ENV === 'production') {
-      // Report to Sentry, LogRocket, or similar service
-      console.error('Production Error:', error, errorInfo);
-      
-      // Example Sentry integration:
-      // import * as Sentry from '@sentry/react';
-      // Sentry.captureException(error, { extra: errorInfo });
+      // Send to monitoring service
+      fetch('/api/errors', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          error: error.message,
+          stack: error.stack,
+          componentStack: errorInfo.componentStack,
+          timestamp: new Date().toISOString(),
+          userAgent: navigator.userAgent,
+          url: window.location.href
+        })
+      }).catch(console.error);
     }
   }
 

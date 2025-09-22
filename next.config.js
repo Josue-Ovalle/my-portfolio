@@ -11,7 +11,22 @@ const nextConfig = {
   generateEtags: false, // Disable ETags
   swcMinify: true, // Use SWC minifier
   experimental: {
-    scrollRestoration: true, // Enable scroll restoration
+    optimizeCss: true,
+    scrollRestoration: true,
+  },
+  webpack: (config, { dev, isServer }) => {
+    if (!dev && !isServer) {
+      config.optimization.splitChunks.cacheGroups = {
+        ...config.optimization.splitChunks.cacheGroups,
+        vendor: {
+          test: /[\\/]node_modules[\\/]/,
+          name: 'vendors',
+          chunks: 'all',
+          maxSize: 244000,
+        },
+      }
+    }
+    return config
   },
   async headers() {
     return [

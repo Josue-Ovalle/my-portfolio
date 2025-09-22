@@ -139,10 +139,24 @@ export function ThemeProvider({
       console.warn('Error saving theme to localStorage:', error);
     }
     
-    // Announce theme change to screen readers
+    // Check for reduced motion preference
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    
+    if (!prefersReducedMotion) {
+      // Add smooth transition only if motion is allowed
+      document.documentElement.style.transition = 'background-color 0.3s ease, color 0.3s ease';
+      setTimeout(() => {
+        document.documentElement.style.transition = '';
+      }, 300);
+    }
+
+    // Announce theme change to screen readers with more context
     const announcement = document.getElementById('theme-announcement');
     if (announcement) {
-      announcement.textContent = `Switched to ${newDarkMode ? 'dark' : 'light'} mode`;
+      const modeDescription = newDarkMode 
+        ? 'dark mode - better for low light environments' 
+        : 'light mode - better for bright environments';
+      announcement.textContent = `Switched to ${modeDescription}`;
       setTimeout(() => {
         announcement.textContent = '';
       }, 1000);

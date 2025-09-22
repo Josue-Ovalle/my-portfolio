@@ -72,6 +72,11 @@ const Header = ({ darkMode, toggleDarkMode }) => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
       handleNavClick(href, event);
+      // Announce navigation to screen readers
+      const announcement = document.getElementById('navigation-announcement');
+      if (announcement) {
+        announcement.textContent = `Navigating to ${href.substring(1)} section`;
+      }
     }
   };
 

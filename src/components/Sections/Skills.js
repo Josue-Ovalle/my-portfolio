@@ -1,7 +1,7 @@
 'use client';
 
 import { motion, useInView } from 'framer-motion';
-import { useRef, useState } from 'react';
+import { useRef, useState, memo } from 'react';
 import { 
   Code2, 
   Palette, 
@@ -17,7 +17,7 @@ import {
 import { staggerContainer, staggerItem, cardHover } from '@/utils/animations';
 import { useAdvancedScrollAnimation, useStaggerChildren } from '@/hooks/useAdvancedScrollAnimation';
 
-const Skills = () => {
+const Skills = memo(() => {
   const { ref: containerRef, isInView } = useAdvancedScrollAnimation({ threshold: 0.1 });
   const { ref: skillsGridRef, container, item, controls } = useStaggerChildren(0.08);
   const [activeCategory, setActiveCategory] = useState('all');
@@ -312,6 +312,9 @@ const Skills = () => {
       </div>
     </section>
   );
-};
+
+});
+
+Skills.displayName = "Skills";
 
 export default Skills;

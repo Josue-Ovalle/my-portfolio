@@ -1,14 +1,15 @@
 'use client';
 
 import { motion, useInView } from 'framer-motion';
-import { useRef } from 'react';
+import { useRef, memo } from 'react';
 import { Code2, Zap, Brain, Trophy } from 'lucide-react';
 import { personalInfo, skills, timeline } from '@/data/portfolioData';
 import { staggerContainer, staggerItem } from '@/utils/animations';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import Image from 'next/image';
+import { getDisplayName } from 'next/dist/shared/lib/utils';
 
-const About = () => {
+const About = memo(() => {
   const { ref, isInView } = useScrollAnimation();
 
   const features = [
@@ -211,6 +212,8 @@ const About = () => {
       </div>
     </section>
   );
-};
+});
+
+About.displayName = "About"
 
 export default About;

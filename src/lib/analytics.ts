@@ -1,3 +1,10 @@
+// Add gtag to the Window interface for TypeScript
+declare global {
+  interface Window {
+    gtag: (...args: any[]) => void;
+    dataLayer?: any[];
+  }
+}
 interface AnalyticsEvent {
   action: string;
   category: string;

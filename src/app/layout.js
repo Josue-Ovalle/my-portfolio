@@ -26,6 +26,18 @@ export const metadata = {
     default: 'Josué Ovalle - Frontend Developer & Web Developer from Guatemala',
     template: '%s | Josué Ovalle - Frontend Developer'
   },
+  other: {
+    'application-name': 'Josué Ovalle Portfolio',
+    'apple-mobile-web-app-capable': 'yes',
+    'apple-mobile-web-app-status-bar-style': 'default',
+    'apple-mobile-web-app-title': 'Josué Ovalle',
+    'format-detection': 'telephone=no',
+    'mobile-web-app-capable': 'yes',
+    'msapplication-config': '/browserconfig.xml',
+    'msapplication-TileColor': '#0ea5e9',
+    'msapplication-tap-highlight': 'no',
+    'theme-color': '#0ea5e9',
+  },
   description: 'Frontend developer specializing in React, Next.js, and TypeScript. Based in Guatemala City, creating modern web applications with focus on performance and user experience.',
   keywords: [
     'frontend developer',

@@ -1,21 +1,23 @@
 'use client';
 
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion';
 import { ChevronDown, ArrowRight, Sparkles, Code2, Zap } from 'lucide-react';
 import { heroAnimations, floatingAnimation, springPresets } from '@/utils/animations';
 import { useAdvancedScrollAnimation, useParallax, use3DTilt } from '@/hooks/useAdvancedScrollAnimation';
 import AnimatedButton from '@/components/UI/AnimatedButton';
-import { useRef, useState } from 'react';
+import { useRef, useState, memo } from 'react';
 
-const Hero = () => {
+const Hero = memo(() => {
   const containerRef = useRef(null);
+  const shouldReduceMotion = useReducedMotion();
+  
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end start"]
   });
   
-  const y = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
-  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+  const y = useTransform(scrollYProgress, [0, 1], shouldReduceMotion ? ["0%", "0%"] : ["0%", "30%"]);
+  const opacity = useTransform(scrollYProgress, [0, 0.5], shouldReduceMotion ? [1, 1] : [1, 0]);
   
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const { ref: tiltRef, transform } = use3DTilt(5, 1200);
@@ -359,6 +361,8 @@ const Hero = () => {
       </motion.button>
     </section>
   );
-};
+});
+
+Hero.displayName = "Hero";
 
 export default Hero;

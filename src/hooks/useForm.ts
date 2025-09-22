@@ -11,7 +11,7 @@ const sanitizeInput = (value: string): string => {
     .replace(/&/g, '&amp;');
 };
 
-export function useForm<T extends Record<string, any>>(
+export function useForm<T extends Record<string, string>>(
   initialValues: T, 
   validationRules: FormValidationRules = {}
 ): UseFormReturn<T> {

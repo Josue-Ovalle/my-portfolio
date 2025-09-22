@@ -14,6 +14,8 @@ interface PerformanceMetrics {
   ttfb: number;
 }
 
+// Only one export for the hook below
+
 export const usePerformanceMonitoring = () => {
   const [metrics, setMetrics] = useState<PerformanceMetrics>({
     cls: 0,

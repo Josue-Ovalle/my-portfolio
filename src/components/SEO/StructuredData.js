@@ -174,6 +174,22 @@ const StructuredData = () => {
     }))
   };
 
+  const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What's your typical project timeline?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Most projects take 2-8 weeks depending on complexity. I provide a detailed timeline after our initial consultation."
+      }
+    },
+    // Add more FAQ items
+  ]
+};
+
   // Breadcrumb Schema
   const breadcrumbSchema = {
     "@context": "https://schema.org",

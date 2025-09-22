@@ -450,9 +450,9 @@ body {
   }
   
   /* Prevent content from jumping under header */
-  main {
-    padding-top: 4rem; /* 64px for mobile header height */
-  }
+    main {
+      padding-top: 0 !important; /* Instead of 4rem */
+    }
   
   /* Smooth scroll offset for mobile navigation */
   html {

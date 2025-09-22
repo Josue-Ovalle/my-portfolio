@@ -105,28 +105,15 @@ export const metadata = {
       alt: 'Josué Ovalle - Frontend Developer',
     }],
   },
+  // Uncomment and add actual verification codes when available
   /* verification: {
-    google: 'placeholder', // Add actual verification code later
+    google: 'placeholder',
     yandex: 'placeholder',
     yahoo: 'placeholder',
     other: {
       'p:domain_verify': 'placeholder' // Pinterest verification
     }
-  },
-  alternates: {
-    canonical: 'https://josueovalle.com',
-    languages: {
-      'en-US': 'https://josueovalle.com',
-      'es-GT': 'https://josueovalle.com/es'
-    }
-  },
-  other: {
-    'google-site-verification': 'placeholder',
-    'msvalidate.01': 'placeholder',
-    'facebook-domain-verification': 'placeholder'
-  }
-} */ 
-    // Removed verification, until I got ones.
+  }, */
   alternates: {
     canonical: 'https://josueovalle.com', 
     languages: {
@@ -155,6 +142,7 @@ export default function RootLayout({ children }) {
       suppressHydrationWarning
     >
       <head>
+        <meta charSet="utf-8" />
         <link rel="icon" href="/favicon.ico" />
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
@@ -166,7 +154,7 @@ export default function RootLayout({ children }) {
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </head>
-      <body className="font-sans bg-white dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 transition-colors duration-300 pt-16 md:pt-20">
+      <body className="font-sans bg-white dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 transition-colors duration-300">
         {/* Screen reader announcement for theme changes */}
         <div 
           id="theme-announcement" 

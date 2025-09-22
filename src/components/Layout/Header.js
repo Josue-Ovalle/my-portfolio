@@ -50,21 +50,30 @@ const Header = ({ darkMode, toggleDarkMode }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Handle smooth scroll to section
+  // Handle smooth scroll to section - FIXED VERSION
   const handleNavClick = (href, event) => {
     event.preventDefault();
-    const element = document.querySelector(href);
+    
+    // Remove the hash to get the element ID
+    const elementId = href.replace('#', '');
+    const element = document.getElementById(elementId);
+    
     if (element) {
+      // Get actual header height dynamically
       const header = document.querySelector('header');
-      const isMobile = window.innerWidth < 768;
-      const headerHeight = isMobile ? 64 : 80; // Mobile vs desktop header height
+      const headerHeight = header ? header.getBoundingClientRect().height : 80;
       
-      const offsetTop = element.offsetTop - headerHeight;
+      // Calculate position with proper offset
+      const elementPosition = element.getBoundingClientRect().top + window.scrollY;
+      const offsetPosition = elementPosition - headerHeight;
+      
       window.scrollTo({
-        top: offsetTop,
+        top: offsetPosition,
         behavior: 'smooth'
       });
     }
+    
+    // Close mobile menu after navigation
     setIsMenuOpen(false);
   };
 
@@ -76,7 +85,8 @@ const Header = ({ darkMode, toggleDarkMode }) => {
       // Announce navigation to screen readers
       const announcement = document.getElementById('navigation-announcement');
       if (announcement) {
-        announcement.textContent = `Navigating to ${href.substring(1)} section`;
+        const sectionName = href.replace('#', '');
+        announcement.textContent = `Navigating to ${sectionName} section`;
       }
     }
   };
@@ -126,34 +136,24 @@ const Header = ({ darkMode, toggleDarkMode }) => {
   }, [isMenuOpen]);
 
   useEffect(() => {
-  if (isMenuOpen) {
-    document.body.classList.add('menu-open');
-    // Prevent scrolling on the background
-    const scrollY = window.scrollY;
-    document.body.style.position = 'fixed';
-    document.body.style.top = `-${scrollY}px`;
-    document.body.style.left = '0';
-    document.body.style.right = '0';
-  } else {
-    const scrollY = document.body.style.top;
-    document.body.classList.remove('menu-open');
-    document.body.style.position = '';
-    document.body.style.top = '';
-    document.body.style.left = '';
-    document.body.style.right = '';
-    if (scrollY) {
-      window.scrollTo(0, parseInt(scrollY || '0') * -1);
+    if (isMenuOpen) {
+      // Store current scroll position
+      const scrollY = window.scrollY;
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = '100%';
+    } else {
+      // Restore scroll position
+      const scrollY = document.body.style.top;
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+      
+      if (scrollY) {
+        window.scrollTo(0, parseInt(scrollY || '0') * -1);
+      }
     }
-  }
-
-  return () => {
-    document.body.classList.remove('menu-open');
-    document.body.style.position = '';
-    document.body.style.top = '';
-    document.body.style.left = '';
-    document.body.style.right = '';
-  };
-}, [isMenuOpen]);
+  }, [isMenuOpen]);
 
   // Focus management for mobile menu
   useEffect(() => {
@@ -163,12 +163,58 @@ const Header = ({ darkMode, toggleDarkMode }) => {
     }
   }, [isMenuOpen]);
 
+  // Enhanced header variants for desktop animation
   const headerVariants = {
     hidden: { y: -100, opacity: 0 },
     visible: { 
       y: 0, 
       opacity: 1,
-      transition: { duration: 0.5, ease: [0.4, 0, 0.2, 1] }
+      transition: { 
+        duration: 0.6, 
+        ease: [0.4, 0, 0.2, 1],
+        delay: 0.3,
+        staggerChildren: 0.1,
+        delayChildren: 0.4
+      }
+    }
+  };
+
+  // Desktop navigation item animation
+  const navItemVariants = {
+    hidden: { opacity: 0, y: -20 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: { 
+        duration: 0.6,
+        ease: [0.4, 0, 0.2, 1]
+      }
+    }
+  };
+
+  // Logo animation
+  const logoVariants = {
+    hidden: { opacity: 0, scale: 0.8 },
+    visible: { 
+      opacity: 1, 
+      scale: 1,
+      transition: { 
+        duration: 0.6, 
+        ease: [0.4, 0, 0.2, 1]
+      }
+    }
+  };
+
+  // Actions animation
+  const actionsVariants = {
+    hidden: { opacity: 0, scale: 0.8 },
+    visible: { 
+      opacity: 1, 
+      scale: 1,
+      transition: { 
+        duration: 0.6,
+        ease: [0.4, 0, 0.2, 1]
+      }
     }
   };
 
@@ -201,13 +247,12 @@ const Header = ({ darkMode, toggleDarkMode }) => {
         variants={headerVariants}
         initial="hidden"
         animate="visible"
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
           scrolled 
-            ? 'bg-white/90 dark:bg-neutral-950/90 backdrop-blur-lg shadow-sm border-b border-neutral-200/50 dark:border-neutral-800/50' 
+            ? 'bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg shadow-sm border-b border-gray-200/50 dark:border-gray-800/50' 
             : 'bg-transparent'
         }`}
         style={{
-          // Ensure header is always at the top
           position: 'fixed',
           top: 0,
           left: 0,
@@ -224,9 +269,7 @@ const Header = ({ darkMode, toggleDarkMode }) => {
           <div className="flex items-center justify-between h-16 md:h-20">
             {/* Logo */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
+              variants={logoVariants}
               className="flex-shrink-0"
             >
               <a 
@@ -240,15 +283,24 @@ const Header = ({ darkMode, toggleDarkMode }) => {
               </a>
             </motion.div>
 
-            {/* Desktop Navigation */}
+            {/* Desktop Navigation - Now with animations */}
             <div className="hidden md:block">
-              <ul className="ml-10 flex items-baseline space-x-8" role="list">
+              <motion.ul 
+                className="ml-10 flex items-baseline space-x-8" 
+                role="list"
+                variants={{
+                  visible: {
+                    transition: {
+                      staggerChildren: 0.1,
+                      delayChildren: 0.1
+                    }
+                  }
+                }}
+              >
                 {navigationItems.map((item, index) => (
                   <motion.li
                     key={item.name}
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: 0.1 * index }}
+                    variants={navItemVariants}
                   >
                     <a
                       href={item.href}
@@ -265,17 +317,17 @@ const Header = ({ darkMode, toggleDarkMode }) => {
                     </a>
                   </motion.li>
                 ))}
-              </ul>
+              </motion.ul>
             </div>
 
             {/* Actions */}
-            <div className="flex items-center space-x-4">
+            <motion.div 
+              className="flex items-center space-x-4"
+              variants={actionsVariants}
+            >
               {/* Dark Mode Toggle */}
               <motion.button
                 onClick={toggleDarkMode}
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.6, delay: 0.3 }}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
                 className="p-2 rounded-lg bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:text-brand-600 dark:hover:text-brand-400 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-neutral-950"
@@ -292,9 +344,6 @@ const Header = ({ darkMode, toggleDarkMode }) => {
               {/* Mobile menu button */}
               <motion.button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.6, delay: 0.4 }}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
                 className="md:hidden p-2 rounded-lg bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:text-brand-600 dark:hover:text-brand-400 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2"
@@ -309,7 +358,7 @@ const Header = ({ darkMode, toggleDarkMode }) => {
                   <Menu className="w-6 h-6" aria-hidden="true" />
                 )}
               </motion.button>
-            </div>
+            </motion.div>
           </div>
         </nav>
 
@@ -357,7 +406,6 @@ const Header = ({ darkMode, toggleDarkMode }) => {
                 aria-labelledby="mobile-menu-title"
               >
                 <div className="p-6 h-full flex flex-col overflow-y-auto">
-                  {/* Rest of your menu content stays the same */}
                   {/* Header */}
                   <div className="flex justify-between items-center mb-8">
                     <h2 

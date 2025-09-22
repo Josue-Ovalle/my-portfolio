@@ -37,6 +37,7 @@
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.63.0",
     "resend": "^6.0.3",
+    "sharp": "^0.34.4",
     "tailwind-merge": "^2.2.1",
     "tailwindcss": "^3.4.17",
     "tailwindcss-animate": "^1.0.7",
@@ -59,6 +60,7 @@
     "jsdom": "^23.0.1",
     "postcss": "^8.5.6",
     "prisma": "^5.9.1",
+    "svgo": "^4.0.0",
     "typescript": "^5.9.2",
     "vitest": "^3.2.4"
   }

@@ -14,10 +14,10 @@ interface EnhancedSEOProps {
   section?: string;
 }
 
-const EnhancedSEO: React.FC<EnhancedSEOProps> = ({
+export default function EnhancedSEO({
   title = 'Josué Ovalle - Frontend Developer & Modern Web Development Expert',
-  description = 'Professional frontend developer specializing in React, Next.js, and TypeScript. Creating modern, performant websites that deliver measurable business results.',
-  keywords = 'frontend developer, React developer, Next.js expert, TypeScript, web development, Guatemala developer, modern websites, performance optimization, UI/UX design',
+  description = 'Professional frontend developer ...',
+  keywords = 'frontend developer, React developer, ...',
   ogImage = '/my-photo.jpg',
   ogType = 'website',
   canonicalUrl = 'https://josueovalle.com',
@@ -25,7 +25,7 @@ const EnhancedSEO: React.FC<EnhancedSEOProps> = ({
   modifiedTime,
   author = personalInfo.name,
   section = 'Technology'
-}) => {
+}: EnhancedSEOProps) {
   const siteName = 'Josué Ovalle Portfolio';
   const twitterHandle = '@JosueOvalle_';
   

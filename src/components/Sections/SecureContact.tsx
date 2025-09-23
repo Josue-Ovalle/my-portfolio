@@ -19,7 +19,8 @@ interface ContactFormData {
   message: string;
   budget: string;
   timeline: string;
-  honeypot: string; // Anti-spam honeypot field
+  honeypot: string;
+  [key: string]: string;
 }
 
 const SecureContact = () => {

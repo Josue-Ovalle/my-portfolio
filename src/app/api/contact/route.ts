@@ -7,10 +7,8 @@ class RateLimiter {
   private static instance: RateLimiter;
   private requests = new Map<string, { count: number; resetTime: number; blocked: boolean }>();
   private cleanupInterval: NodeJS.Timeout;
-  private isMemoryOnly: boolean;
 
   private constructor() {
-    this.isMemoryOnly = true; // Flag to indicate memory-only storage
     console.warn('[Security Warning] Using in-memory rate limiting. This resets on deployment and is not suitable for production.');
     
     // Clean up expired entries every 5 minutes

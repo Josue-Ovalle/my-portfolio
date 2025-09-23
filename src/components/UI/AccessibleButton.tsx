@@ -4,7 +4,7 @@ import { motion, MotionProps } from 'framer-motion';
 import { forwardRef, ButtonHTMLAttributes } from 'react';
 import { cn } from '@/lib/utils';
 
-interface AccessibleButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'type'> {
+interface AccessibleButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'ghost';
   size?: 'sm' | 'md' | 'lg' | 'xl';
   loading?: boolean;
@@ -24,6 +24,7 @@ const AccessibleButton = forwardRef<HTMLButtonElement, AccessibleButtonProps>(
     className,
     disabled,
     motionProps,
+    type = 'button',
     'aria-label': ariaLabel,
     ...props 
   }, ref) => {
@@ -55,6 +56,7 @@ const AccessibleButton = forwardRef<HTMLButtonElement, AccessibleButtonProps>(
     return (
       <MotionButton
         ref={ref}
+        type={type}
         className={cn(baseClasses, variantClasses[variant], sizeClasses[size], className)}
         disabled={isDisabled}
         aria-label={enhancedAriaLabel}
@@ -63,7 +65,7 @@ const AccessibleButton = forwardRef<HTMLButtonElement, AccessibleButtonProps>(
         whileTap={isDisabled ? {} : { scale: 0.98 }}
         transition={{ type: "spring", stiffness: 400, damping: 17 }}
         {...motionProps}
-        {...props}
+        {...(props as any)}
       >
         {/* Loading indicator and text for accessibility */}
         {loading && (

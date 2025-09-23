@@ -1,5 +1,7 @@
+import forms from '@tailwindcss/forms';
+
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+const config = {
   content: [
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
@@ -10,7 +12,6 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // Premium brand colors
         brand: {
           50: '#f0f9ff',
           100: '#e0f2fe',
@@ -24,14 +25,12 @@ module.exports = {
           900: '#0c4a6e',
           950: '#082f49',
         },
-        // Enhanced accent colors
         accent: {
           electric: '#00d4ff',
           purple: '#8b5cf6',
           green: '#10b981',
           orange: '#f59e0b',
         },
-        // Sophisticated neutrals
         gray: {
           50: '#fafafa',
           100: '#f5f5f5',
@@ -45,7 +44,6 @@ module.exports = {
           900: '#171717',
           950: '#0a0a0a',
         },
-        // Status colors
         success: '#10b981',
         warning: '#f59e0b',
         error: '#ef4444',
@@ -232,35 +230,21 @@ module.exports = {
     },
   },
   plugins: [
-    require('@tailwindcss/forms'),
-    function({ addUtilities }) {
+    forms,
+    ({ addUtilities }) => {
       const newUtilities = {
-        '.text-shadow': {
-          textShadow: '0 2px 4px rgba(0,0,0,0.10)',
-        },
-        '.text-shadow-md': {
-          textShadow: '0 4px 8px rgba(0,0,0,0.12), 0 2px 4px rgba(0,0,0,0.08)',
-        },
-        '.text-shadow-lg': {
-          textShadow: '0 15px 35px rgba(0,0,0,0.1), 0 5px 15px rgba(0,0,0,0.07)',
-        },
-        '.text-shadow-none': {
-          textShadow: 'none',
-        },
-        '.perspective-1000': {
-          perspective: '1000px',
-        },
-        '.perspective-2000': {
-          perspective: '2000px',
-        },
-        '.backface-hidden': {
-          'backface-visibility': 'hidden',
-        },
-        '.transform-gpu': {
-          transform: 'translateZ(0)',
-        },
-      }
-      addUtilities(newUtilities)
-    }
+        '.text-shadow': { textShadow: '0 2px 4px rgba(0,0,0,0.10)' },
+        '.text-shadow-md': { textShadow: '0 4px 8px rgba(0,0,0,0.12), 0 2px 4px rgba(0,0,0,0.08)' },
+        '.text-shadow-lg': { textShadow: '0 15px 35px rgba(0,0,0,0.1), 0 5px 15px rgba(0,0,0,0.07)' },
+        '.text-shadow-none': { textShadow: 'none' },
+        '.perspective-1000': { perspective: '1000px' },
+        '.perspective-2000': { perspective: '2000px' },
+        '.backface-hidden': { 'backface-visibility': 'hidden' },
+        '.transform-gpu': { transform: 'translateZ(0)' },
+      };
+      addUtilities(newUtilities);
+    },
   ],
-}
+};
+
+export default config;

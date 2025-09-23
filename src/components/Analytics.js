@@ -2,18 +2,17 @@
 
 import { useEffect } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
 
-export default function Analytics() {
+function AnalyticsInner() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    // Track pageview with Plausible (optional)
     if (window.plausible) {
       window.plausible('pageview');
     }
-    
-    // Track pageview with Google Analytics (optional)
+
     if (window.gtag) {
       window.gtag('config', process.env.NEXT_PUBLIC_GA_ID, {
         page_path: pathname + (searchParams?.toString() ? `?${searchParams.toString()}` : ''),
@@ -22,4 +21,12 @@ export default function Analytics() {
   }, [pathname, searchParams]);
 
   return null;
+}
+
+export default function Analytics() {
+  return (
+    <Suspense fallback={null}>
+      <AnalyticsInner />
+    </Suspense>
+  );
 }

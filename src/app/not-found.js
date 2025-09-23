@@ -3,11 +3,12 @@
 import { motion } from 'framer-motion';
 import { Home, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+import { Suspense } from 'react';
 
-export default function NotFound() {
+function NotFoundContent() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 via-white to-blue-50 dark:from-gray-950 dark:via-gray-900 dark:to-blue-950">
-      <div className="max-w-md mx-auto text-center px-4">
+      <div className="max-w-md mx-auto text-center px-4 relative">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -87,5 +88,13 @@ export default function NotFound() {
         />
       </div>
     </div>
+  );
+}
+
+export default function NotFound() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
+      <NotFoundContent />
+    </Suspense>
   );
 }

@@ -7,7 +7,7 @@ import Footer from '@/components/Layout/Footer';
 import Hero from '@/components/Sections/Hero';
 import Skills from '@/components/Sections/Skills';
 import About from '@/components/Sections/About';
-import { lazy, Suspense } from 'react';
+import { Suspense } from 'react';
 import { LazyComponentWrapper, createLazyComponent } from '@/components/LazyComponentWrapper';
 
 // Create lazy components with proper error handling
@@ -39,8 +39,10 @@ const SectionLoading = ({ name = 'section' }) => (
           className="w-16 h-16 border-4 border-brand-500/20 border-t-brand-500 rounded-full animate-spin mx-auto mb-6" 
           aria-hidden="true"
         />
-        <div className="absolute inset-0 w-16 h-16 border-4 border-transparent border-l-brand-300 rounded-full animate-spin mx-auto" 
-             style={{ animationDirection: 'reverse', animationDuration: '1.5s' }} />
+        <div 
+          className="absolute inset-0 w-16 h-16 border-4 border-transparent border-l-brand-300 rounded-full animate-spin mx-auto" 
+          style={{ animationDirection: 'reverse', animationDuration: '1.5s' }} 
+        />
       </div>
       <h3 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100 mb-2">
         Loading {name}
@@ -125,8 +127,10 @@ export default function Home() {
               className="w-20 h-20 border-4 border-brand-500/20 border-t-brand-500 rounded-full animate-spin mx-auto" 
               aria-hidden="true"
             />
-            <div className="absolute inset-0 w-20 h-20 border-4 border-transparent border-r-brand-300 rounded-full animate-spin mx-auto" 
-                 style={{ animationDirection: 'reverse', animationDuration: '2s' }} />
+            <div 
+              className="absolute inset-0 w-20 h-20 border-4 border-transparent border-r-brand-300 rounded-full animate-spin mx-auto" 
+              style={{ animationDirection: 'reverse', animationDuration: '2s' }} 
+            />
           </div>
           <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100 mb-2">
             JosuÉ Ovalle
@@ -140,7 +144,9 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-white dark:bg-neutral-950 transition-colors duration-300">
-      <Header darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
+      <Suspense fallback={<div>Loading header...</div>}>
+        <Header darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
+      </Suspense>
       
       <main id="main-content" role="main" className="pt-16 md:pt-20">
         <Hero />
@@ -177,7 +183,10 @@ export default function Home() {
       </main>
       
       <Footer />
-      <StickyCTA />
+      
+      <Suspense fallback={<div>Loading quick actions...</div>}>
+        <StickyCTA />
+      </Suspense>
     </div>
   );
 }
